@@ -1,0 +1,625 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+"A scalar that can represent any JSON value."
+scalar JSON
+"A scalar that can represent any JSON Object value."
+scalar JSONObject
+"""
+ISO 8601 combined date and time without timezone.
+
+# Examples
+
+* `2015-07-01T08:59:60.123`,
+"""
+scalar NaiveDateTime
+"""
+A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
+Strings within GraphQL. UUIDs are used to assign unique identifiers to
+entities without requiring a central allocating authority.
+
+# References
+
+* [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
+* [RFC4122: A Universally Unique Identifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
+"""
+scalar UUID
+"""
+Lightweight GraphQL output type for audit logs
+This exposes the audit log data to GraphQL queries with optimized field handling
+"""
+type AuditLogGraphQL {
+  id: UUID!
+  userId: UUID
+  userRole: String
+  userAccessLevel: String
+  authorityId: UUID
+  nationCode: String
+  operationType: String!
+  operationName: String
+  requestId: UUID
+  clientIp: String
+  userAgent: String
+  executionTimeMs: Int
+  responseStatus: String!
+  errorMessage: String
+  sessionId: String
+  "Full GraphQL query text (may be large - use with caution)"
+  queryText: String!
+  """
+  Query variables as JSON string
+  May contain sensitive content - username, password, etc.
+  """
+  variablesJson: String
+  "Error details as JSON string"
+  errorsJson: String
+  "Formatted execution timestamp"
+  executedAt: String!
+  "ISO 8601 timestamp"
+  executedAtIso: String!
+  "Unix timestamp (seconds since epoch)"
+  executedAtUnix: Int!
+  "Truncated query text (first 200 chars) for list views"
+  queryPreview: String!
+}
+type Authority {
+  id: UUID!
+  creatorId: UUID!
+  nationId: UUID!
+  name: String!
+  email: String!
+  phone: String!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  expiresAt: NaiveDateTime
+  creator: User!
+  nation: Nation!
+  classificationSchemas: [ClassificationSchema!]!
+  mostRecentClassificationSchema: [ClassificationSchema!]!
+}
+type ClassificationSchema {
+  id: UUID!
+  creatorId: UUID!
+  nationCode: String!
+  toNatoUnclassified: String!
+  toNatoRestricted: String!
+  toNatoConfidential: String!
+  toNatoSecret: String!
+  toNatoTopSecret: String!
+  fromNatoUnclassified: String!
+  fromNatoRestricted: String!
+  fromNatoConfidential: String!
+  fromNatoSecret: String!
+  fromNatoTopSecret: String!
+  caveats: String!
+  version: String!
+  authorityId: UUID!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  expiresAt: NaiveDateTime
+  getCreator: User!
+  getAuthority: Authority!
+}
+"""
+A request for security classification conversion to the middleware.
+This would be a JSON data package sent to the middleware by an validated
+user who is part of an accredited authority and should include the information
+necessary to generate conversion response.
+"""
+type ConversionRequest {
+  id: UUID!
+  creatorId: UUID!
+  authorityId: UUID!
+  dataObjectId: UUID!
+  sourceNationClassification: String!
+  sourceNationCode: String!
+  targetNationCodes: [String]!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  completedAt: NaiveDateTime
+  "Get the user who created this conversion request"
+  creator: User!
+  "Get the authority that is requesting this conversion"
+  authority: Authority!
+  "Get the data object that is being converted"
+  dataObject: DataObjectGraphQL!
+  "Get the metadata for the data object"
+  metadata: MetadataGraphQL!
+  conversionResponse: ConversionResponse!
+  "Check if this conversion request has been completed"
+  isCompleted: Boolean!
+}
+type ConversionRequestResponse {
+  request: ConversionRequest!
+  response: ConversionResponse
+  success: Boolean!
+  message: String!
+}
+"""
+A response from the security classification conversion middleware.
+This represents the result of processing a ConversionRequest, containing the
+NATO equivalent classification and the target nation classifications.
+"""
+type ConversionResponse {
+  id: UUID!
+  conversionRequestId: UUID!
+  subjectDataId: UUID!
+  natoEquivalent: String!
+  targetNationClassifications: JSON!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  expiresAt: NaiveDateTime
+  "Get the conversion request that generated this response"
+  conversionRequest: ConversionRequest!
+  "Get the data object that was classified"
+  subjectData: DataObjectGraphQL!
+  "Get the target nation classifications as a HashMap"
+  targetClassifications: JSONObject!
+  "Check if this conversion response has expired"
+  isExpired: Boolean!
+}
+"""
+GraphQL model with decrypted String fields
+This is what gets exposed to the GraphQL API
+"""
+type DataObjectGraphQL {
+  id: UUID!
+  creatorId: UUID!
+  title: String!
+  description: String!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  creator: User!
+  metadata: MetadataGraphQL!
+  conversionRequest: ConversionRequest!
+  conversionResponse: ConversionResponse!
+}
+"Represents the count of metadata records for a specific domain"
+type DomainCount {
+  domain: String!
+  count: Int!
+}
+"GraphQL model with decrypted String fields"
+type MetadataGraphQL {
+  id: UUID!
+  dataObjectId: UUID!
+  identifier: String!
+  authorizationReference: String
+  authorizationReferenceDate: NaiveDateTime
+  format: String!
+  formatSize: Int
+  securityClassification: String!
+  releasableToCountries: [String]
+  releasableToOrganizations: [String]
+  releasableToCategories: [String]
+  disclosureCategory: String
+  handlingRestrictions: [String]
+  handlingAuthority: String
+  noHandlingRestrictions: Boolean
+  domain: String!
+  tags: [String]!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  dataObject: DataObjectGraphQL!
+  originatingOrganization: Authority!
+  custodianOrganization: Authority!
+}
+type Mutation {
+  createUser(userData: UserData!): User!
+  updateUser(userData: UserUpdate!): User!
+  signIn(input: LoginQuery!): UserResponse!
+  """
+  Submit a new conversion request for security classification translation
+  
+  This mutation:
+  1. Creates a DataObject with the provided document information
+  2. Creates Metadata for the document
+  3. Creates a ConversionRequest record
+  4. Automatically processes the conversion (source → NATO → targets)
+  5. Returns both the request and response
+  
+  Requires authentication. The user must belong to a valid authority.
+  """
+  submitConversionRequest(conversionData: ConversionRequestInput!): ConversionRequestResponse!
+  """
+  Submit a conversion request without automatic processing
+  
+  This creates the request record but does not immediately process the conversion.
+  Useful for batch processing or manual review workflows.
+  
+  Requires authentication.
+  """
+  createConversionRequest(conversionData: ConversionRequestInput!): ConversionRequest!
+  """
+  Process an existing conversion request to generate a response
+  
+  Takes a conversion request ID and processes it to generate classification conversions.
+  This is useful for:
+  - Re-processing failed conversions
+  - Processing requests that were created without automatic conversion
+  - Updating conversions when schemas change
+  
+  Requires authentication.
+  """
+  processConversionRequest(requestId: UUID!): ConversionResponse!
+  """
+  Mark a conversion request as completed
+  
+  Updates the completed_at timestamp for a conversion request.
+  This is typically done automatically but can be triggered manually if needed.
+  
+  Requires admin privileges.
+  """
+  markConversionRequestCompleted(requestId: UUID!): ConversionRequest!
+  """
+  Delete a conversion request and its associated data
+  
+  This will delete:
+  - The conversion request record
+  - Any associated conversion responses (via CASCADE)
+  
+  Note: This does NOT delete the DataObject or Metadata as they may be referenced elsewhere.
+  
+  Requires admin privileges.
+  """
+  deleteConversionRequest(requestId: UUID!): String!
+}
+type Nation {
+  id: UUID!
+  creatorId: UUID!
+  nationCode: String!
+  nationName: String!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  creator: User!
+  authorities: [Authority!]!
+  conversionRequests: [ConversionRequest!]!
+  inboundConversionRequests: [ConversionRequest!]!
+}
+type Query {
+  "Returns a vector of all users"
+  allUsers: [User!]!
+  "Returns a vector of all users"
+  userByEmail(email: String!): User!
+  "Returns a vector of all users"
+  userById(id: UUID!): User!
+  """
+  Get recent audit logs with advanced filtering (Admin only)
+  
+  Returns audit log entries with pagination and filtering support
+  """
+  auditLogs(
+    "Maximum number of logs to return"
+    limit: Int! = 50,
+    "Number of records to skip for pagination"
+    offset: Int! = 0,
+    "Optional filters"
+    filter: AuditLogFilter
+  ): [AuditLogGraphQL!]!
+  """
+  Get audit logs for a specific user (Admin only)
+  
+  Track all GraphQL operations performed by a specific user
+  """
+  auditLogsByUser(userId: UUID!, 
+    "Maximum number of logs to return"
+    limit: Int! = 50,
+    "Number of records to skip"
+    offset: Int! = 0
+  ): [AuditLogGraphQL!]!
+  """
+  Get audit logs for a specific authority/organization (Admin only)
+  
+  Track all GraphQL operations associated with an authority
+  """
+  auditLogsByAuthority(authorityId: UUID!, 
+    "Maximum number of logs to return"
+    limit: Int! = 50
+  ): [AuditLogGraphQL!]!
+  """
+  Get audit logs for a specific nation (Admin only)
+  
+  Track all GraphQL operations from users of a specific nation
+  """
+  auditLogsByNation(nationCode: String!, 
+    "Maximum number of logs to return"
+    limit: Int! = 50
+  ): [AuditLogGraphQL!]!
+  """
+  Get all failed operations for security review (Admin only)
+  
+  Returns audit logs where the operation resulted in an error
+  """
+  failedOperations(
+    "Maximum number of logs to return"
+    limit: Int! = 50
+  ): [AuditLogGraphQL!]!
+  """
+  Get audit logs by request ID for correlation (Admin only)
+  
+  Track all operations associated with a specific request ID
+  """
+  auditLogsByRequestId(requestId: UUID!): [AuditLogGraphQL!]!
+  """
+  Get audit logs for the current user (Self-service)
+  
+  Allows users to view their own activity log
+  """
+  myAuditLogs(
+    "Maximum number of logs to return"
+    limit: Int! = 20
+  ): [AuditLogGraphQL!]!
+  "Returns count of DataObjects in the system"
+  dataObjectCount: Int!
+  "Returns a data_object by its Uuid"
+  dataObjectById(id: UUID!): DataObjectGraphQL!
+  """
+  Accepts a String "name" and returns a vector of data_objects that
+  match in EN or FR against it
+  """
+  dataObjectsByTitle(title: String!): [DataObjectGraphQL!]!
+  "Return a DataObjectCount by a specific DataObjectDomain (SCIENTIFIC, etc.)"
+  dataObjectByMetadataDomain(domain: String!): [DataObjectGraphQL!]!
+  """
+  Returns all conversion requests associated with a specific data object
+  
+  A data object can have multiple conversion requests if it has been
+  converted for different target nations or re-converted over time.
+  """
+  conversionRequestsByDataObject(dataObjectId: UUID!): ConversionRequest!
+  """
+  Returns all conversion responses associated with a specific data object (subject data)
+  
+  These are the classification conversion results for this data object.
+  Each response contains the NATO equivalent and target nation classifications.
+  """
+  conversionResponsesByDataObject(dataObjectId: UUID!): ConversionResponse!
+  "Returns vector of all data_objects"
+  dataObjects: [DataObjectGraphQL!]!
+  "Returns count of Metadata records in the system"
+  metadataCount: Int!
+  "Returns a metadata record by its Uuid"
+  metadataById(id: UUID!): MetadataGraphQL!
+  """
+  Returns metadata by data object ID
+  
+  Each data object has exactly one metadata record associated with it.
+  """
+  metadataByDataObjectId(dataObjectId: UUID!): MetadataGraphQL!
+  """
+  Returns all metadata records for a specific domain
+  
+  Domains represent different classification categories like:
+  - INTEL (Intelligence)
+  - CYBER (Cybersecurity)
+  - OPERATIONS (Military Operations)
+  - LOGISTICS (Supply Chain)
+  etc.
+  """
+  metadataByDomain(domain: String!): [MetadataGraphQL!]!
+  """
+  Returns all data object IDs that belong to a specific domain
+  
+  Useful for bulk operations or filtering data objects by domain.
+  """
+  dataObjectIdsByDomain(domain: String!): [UUID!]!
+  """
+  Returns all data objects for a specific domain (with full data object details)
+  
+  This combines metadata domain filtering with complete data object information.
+  """
+  dataObjectsByDomain(domain: String!): [DataObjectGraphQL!]!
+  "Returns vector of all metadata records"
+  metadata: [MetadataGraphQL!]!
+  "Returns a limited number of metadata records"
+  metadataCountQuery(count: Int!): [MetadataGraphQL!]!
+  """
+  Returns count of metadata records grouped by domain
+  
+  This provides a summary showing each unique domain and how many
+  metadata records exist for that domain. Useful for understanding
+  the distribution of classified data across different domains.
+  """
+  metadataCountsByDomain: [DomainCount!]!
+  "Returns count of Nations in the system"
+  nationCount: Int!
+  "Returns a nation by its Uuid"
+  nationById(id: UUID!): Nation!
+  "Returns a nation by its nation code"
+  nationByCode(nationCode: String!): Nation!
+  "Returns nations by creator ID"
+  nationsByCreatorId(creatorId: UUID!): [Nation!]!
+  "Returns vector of all nations"
+  nations: [Nation!]!
+  "Returns count of Authorities in the system"
+  authorityCount: Int!
+  "Returns an authority by its Uuid"
+  authorityById(id: UUID!): Authority!
+  "Returns authorities by creator ID"
+  authoritiesByCreatorId(creatorId: UUID!): [Authority!]!
+  "Returns authorities by nation ID"
+  authoritiesByNationCode(nationCode: String!): [Authority!]!
+  "Returns vector of all authorities"
+  authorities: [Authority!]!
+  "Returns count of ClassificationSchemas in the system"
+  classificationSchemaCount: Int!
+  "Returns a classification schema by its Uuid"
+  classificationSchemaById(id: UUID!): ClassificationSchema!
+  "Returns classification schemas by creator ID"
+  classificationSchemasByCreatorId(creatorId: UUID!): [ClassificationSchema!]!
+  "Returns classification schemas by nation code"
+  classificationSchemasByNationCode(nationCode: String!): [ClassificationSchema!]!
+  "Returns a specific classification schema by nation code and version"
+  classificationSchemaByNationCodeAndVersion(nationCode: String!, version: String!): ClassificationSchema!
+  "Returns classification schemas by authority ID"
+  classificationSchemasByAuthorityId(authorityId: UUID!): [ClassificationSchema!]!
+  "Returns the latest classification schema for a given nation code"
+  classificationSchemaLatestByNationCode(nationCode: String!): ClassificationSchema!
+  "Returns vector of all classification schemas"
+  classificationSchemas: [ClassificationSchema!]!
+  "Returns count of ConversionRequests in the system"
+  conversionRequestCount: Int!
+  "Returns a conversion request by its Uuid"
+  conversionRequestById(id: UUID!): ConversionRequest!
+  "Returns conversion requests by creator ID"
+  conversionRequestsByCreatorId(creatorId: UUID!): [ConversionRequest!]!
+  "Returns conversion requests by authority ID"
+  conversionRequestsByAuthorityId(authorityId: UUID!): [ConversionRequest!]!
+  "Returns conversion requests by data object ID"
+  conversionRequestByDataObjectId(dataObjectId: UUID!): ConversionRequest!
+  "Returns conversion requests by source nation code"
+  conversionRequestsBySourceNationCode(nationCode: String!): [ConversionRequest!]!
+  "Returns all pending (not completed) conversion requests"
+  conversionRequestsPending: [ConversionRequest!]!
+  "Returns all completed conversion requests"
+  conversionRequestsCompleted: [ConversionRequest!]!
+  "Returns vector of all conversion requests"
+  conversionRequests: [ConversionRequest!]!
+  "Returns a limited number of conversion requests"
+  conversionRequestsCount(count: Int!): [ConversionRequest!]!
+  "Returns count of ConversionResponses in the system"
+  conversionResponseCount: Int!
+  "Returns a conversion response by its Uuid"
+  conversionResponseById(id: UUID!): ConversionResponse!
+  "Returns conversion responses by conversion request ID"
+  conversionResponseByRequestId(requestId: UUID!): ConversionResponse!
+  "Returns conversion responses by subject data (data object) ID"
+  conversionResponsesBySubjectDataId(subjectDataId: UUID!): ConversionResponse!
+  "Returns conversion responses by NATO equivalent classification level"
+  conversionResponsesByNatoEquivalent(natoClassification: String!): [ConversionResponse!]!
+  "Returns all active (non-expired) conversion responses"
+  conversionResponsesActive: [ConversionResponse!]!
+  "Returns all expired conversion responses"
+  conversionResponsesExpired: [ConversionResponse!]!
+  "Returns vector of all conversion responses"
+  conversionResponses: [ConversionResponse!]!
+  "Returns a limited number of conversion responses"
+  conversionResponsesCount(count: Int!): [ConversionResponse!]!
+}
+type User {
+  id: UUID!
+  email: String!
+  role: String!
+  name: String!
+  accessLevel: String!
+  createdAt: NaiveDateTime!
+  updatedAt: NaiveDateTime!
+  "Access Level: Admin"
+  accessKey: String!
+  "Access Level: Admin"
+  approvedByUserUid: UUID
+  """
+  Foreign key to Authority - Required for non-ADMIN users
+  Establishes User -> Authority -> Nation hierarchy
+  """
+  authorityId: UUID
+  """
+  Get the authority this user belongs to (if any)
+  Returns None for ADMIN users who don't belong to an authority
+  """
+  authority: Authority
+}
+type UserResponse {
+  id: UUID,
+  bearer: String!
+  role: String!
+  email: String!
+}
+"Input type for filtering audit logs"
+input AuditLogFilter {
+  "Filter by user ID"
+  userId: UUID
+  "Filter by authority ID"
+  authorityId: UUID
+  "Filter by nation code"
+  nationCode: String
+  "Filter by operation type (query, mutation, subscription)"
+  operationType: String
+  "Filter by response status (success, error, partial)"
+  responseStatus: String
+  "Filter by date range - start"
+  startDate: String
+  "Filter by date range - end"
+  endDate: String
+  "Filter by minimum execution time (ms)"
+  minExecutionTime: Int
+}
+"""
+The JSON formatted data payload submitted to the API that triggers
+a security classification conversion
+"""
+input ConversionRequestInput {
+  userId: UUID!
+  authorityId: UUID!
+  dataObject: DataObjectInput!
+  metadata: MetadataInput!
+  sourceNationClassification: String!
+  sourceNationCode: String!
+  targetNationCodes: [String!]!
+}
+"""
+A lightweight struct to accept JSON formatted data from a ConversionRequest
+needed to create a NewDataObject
+GraphQL input type accepts plain String (will be encrypted internally)
+"""
+input DataObjectInput {
+  title: String!
+  description: String!
+}
+input LoginQuery {
+  email: String!
+  password: String!
+}
+"""
+A light struct to accept the JSON formatted Metadata included with
+a ConversionRequest
+GraphQL input type accepts plain String (will be encrypted internally)
+"""
+input MetadataInput {
+  identifier: String!
+  authorizationReference: String
+  authorizationReferenceDate: NaiveDateTime
+  originatorOrganizationId: UUID!
+  custodianOrganizationId: UUID!
+  format: String!
+  formatSize: Int
+  securityClassification: String!
+  releasableToCountries: [String]
+  releasableToOrganizations: [String]
+  releasableToCategories: [String]
+  disclosureCategory: String
+  handlingRestrictions: [String]
+  handlingAuthority: String
+  noHandlingRestrictions: Boolean
+  domain: String!
+  tags: [String]!
+}
+"Input Struct to create a new user. Only accessible by Administrators."
+input UserData {
+  name: String!
+  email: String!
+  password: String!
+  "UserRole in system: USER, OPERATOR, ANALYST, ADMIN"
+  role: String!
+  "Authority ID - Required for non-ADMIN users"
+  authorityId: UUID
+}
+"Input Struct to update a user. Only accessible by Administrators."
+input UserUpdate {
+  id: UUID!
+  name: String
+  email: String
+  password: String
+  "UserRole in system: USER, OPERATOR, ANALYST, ADMIN"
+  role: String
+  "Authority ID - Required for non-ADMIN users"
+  authorityId: UUID
+}
+"Indicates that an Input Object is a OneOf Input Object (and thus requires exactly one of its field be provided)"
+directive @oneOf on INPUT_OBJECT
+"Provides a scalar specification URL for specifying the behavior of custom scalar types."
+directive @specifiedBy(
+    "URL that specifies the behavior of this scalar."
+    url: String!
+  ) on SCALAR

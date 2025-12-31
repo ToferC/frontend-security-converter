@@ -1,0 +1,54 @@
+[package]
+name = "frontend"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Web
+actix-web = "4.11.0"
+#actix-web-httpauth = "0.8.2"
+actix-rt = "2.10.0"
+actix-multipart = "0.7.2"
+actix-service = "2.0.3"
+
+actix-identity = "0.9.0"
+actix-session = { version = "0.11.0", features=["cookie-session"]}
+actix-web-static-files = { version = "4.1", features = ["static-files-03"] }
+static-files = "0.3.1"
+
+reqwest = { version = "0.13", features = ["json", "blocking"] }
+
+# database and data
+lazy_static = "1.4"
+shrinkwraprs = "0.3"
+graphql_client = "0.14.0"
+
+dotenv = "0.15.0"
+chrono = {version = "*", features = ["serde"] }
+serde = "1.0.136"
+serde_derive = "1.0.136"
+derive_more = "0.99.8"
+serde_json = "1.0.78"
+uuid = { version = "0.8.2", features = ["serde", "v4"] }
+rand = "0.8.4"
+regex = "1.5.4"
+env_logger = "0.9.0"
+strum = { version = "0.27.2", features = ["derive"] }
+strum_macros = "0.27.0"
+
+# templating
+tera = "1.15.0"
+tera-text-filters = "1.0"
+Inflector = "0.11.4"
+
+# localization
+fluent-templates = { version = "*", features = ["tera"] }
+
+# email
+sendgrid = "0.17.4"
+
+[build-dependencies]
+static-files = "0.3.1"

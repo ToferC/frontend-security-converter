@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>{{ fluent(key="authority", lang=lang )}}</title>
+{% endblock title %}
+
+{% block content %}
+
+<div class="col m-md-2 m-1">
+
+    <h1>{{ authority.name }}</h1>
+
+    <hr>
+    <h3>Details</h3>
+    <li>Nation: {{ authority.nation.nationName }}</li>
+    <li>Code: {{ authority.nation.nationCode }}</li>
+
+    <h3>Contact</h3>
+    <li>Email: {{ authority.email }}</li>
+    <li>Phone: {{ authority.phone }}</li>
+
+    <hr>
+</div>
+
+
+
+{% endblock content %}

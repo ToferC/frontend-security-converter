@@ -1,0 +1,27 @@
+query UserById($id:UUID!) {
+  userById(id:$id) {
+    id
+    email
+    role
+    name
+    accessLevel
+    createdAt
+    updatedAt
+    authority {
+        id
+        name
+        email
+        phone
+        createdAt
+        updatedAt
+        expiresAt
+        nation {
+            id
+            nationCode
+            nationName
+            createdAt
+            updatedAt
+        }
+    }
+  }
+}

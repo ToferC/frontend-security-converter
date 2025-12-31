@@ -1,0 +1,22 @@
+query AuthorityById($id:UUID!) {
+  authorityById(id:$id) {
+    id
+    nationId
+    name
+    email
+    phone
+    classificationSchemas {
+      id
+      toNatoUnclassified
+      toNatoRestricted
+      toNatoConfidential
+      toNatoSecret
+      toNatoTopSecret
+    }
+    nation {
+      id
+      nationName
+      nationCode
+    }
+  }
+}

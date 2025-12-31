@@ -1,0 +1,9 @@
+query AllAuthorities {
+  authorities {
+    id
+    nationId
+    name
+    email
+    phone
+  }
+}
