@@ -22,8 +22,8 @@ pub async fn toggle_language_index(
     println!("New lang: {}", &new_lang);
 
     HttpResponse::Found()
-        .header("Accept-Language", new_lang)
-        .header("Location", format!("/{}", &new_lang))
+        .append_header(("Accept-Language", new_lang))
+        .append_header(("Location", format!("/{}", &new_lang)))
         .finish()
 }
 
@@ -48,7 +48,7 @@ pub async fn toggle_language(
     let cleaned_url: &str = url.split("/").into_iter().last().expect("Unable to find url");
 
     HttpResponse::Found()
-        .header("Location", format!("/{}/{}", &new_lang, &cleaned_url))
+        .append_header(("Location", format!("/{}/{}", &new_lang, &cleaned_url)))
         .finish()
 }
 
@@ -70,7 +70,7 @@ pub async fn toggle_language_two(
     println!("New lang: {}", &new_lang);
 
     HttpResponse::Found()
-        .header("Location", format!("/{}/{}/{}", &new_lang, &url, &url2))
+        .append_header(("Location", format!("/{}/{}/{}", &new_lang, &url, &url2)))
         .finish()
 }
 
@@ -93,6 +93,6 @@ pub async fn toggle_language_three(
     println!("New lang: {}", &new_lang);
 
     HttpResponse::Found()
-        .header("Location", format!("/{}/{}/{}/{}", &new_lang, &url, &url2, &url3))
+        .append_header(("Location", format!("/{}/{}/{}/{}", &new_lang, &url, &url2, &url3)))
         .finish()
 }
