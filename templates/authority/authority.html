@@ -20,6 +20,26 @@
     <li>Phone: {{ authority.phone }}</li>
 
     <hr>
+
+    {% if authority.mostRecentClassificationSchema %}
+    <h3>Classification to NATO</h3>
+    <li>To NATO UNCLASSIFIED: {{ authority.mostRecentClassificationSchema.toNatoUnclassified }}</li>
+    <li>To NATO RESTRICTED: {{ authority.mostRecentClassificationSchema.toNatoRestricted }}</li>
+    <li>To NATO CONFIDENTIAL: {{ authority.mostRecentClassificationSchema.toNatoConfidential }}</li>
+    <li>To NATO SECRET: {{ authority.mostRecentClassificationSchema.toNatoSecret }}</li>
+    <li>To NATO TOP SECRET: {{ authority.mostRecentClassificationSchema.toNatoTopSecret }}</li>
+    <hr>
+
+    <h3>Classification from NATO</h3>
+    <li>From NATO UNCLASSIFIED: {{ authority.mostRecentClassificationSchema.fromNatoUnclassified }}</li>
+    <li>From NATO RESTRICTED: {{ authority.mostRecentClassificationSchema.fromNatoRestricted }}</li>
+    <li>From NATO CONFIDENTIAL: {{ authority.mostRecentClassificationSchema.fromNatoConfidential }}</li>
+    <li>From NATO SECRET: {{ authority.mostRecentClassificationSchema.fromNatoSecret }}</li>
+    <li>From NATO TOP SECRET: {{ authority.mostRecentClassificationSchema.fromNatoTopSecret }}</li>
+    <hr>
+    {% else %}
+    <li>No Classification Schema for {{ authority.name }}</li>
+    {% endif %}
 </div>
 
 

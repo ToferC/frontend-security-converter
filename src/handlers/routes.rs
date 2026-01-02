@@ -27,6 +27,10 @@ use crate::handlers::{
     // authorities
     authority_by_id,
 
+    // conversion_request
+    conversion_request_form,
+    submit_document,
+
 };
 
 pub fn configure_services(config: &mut web::ServiceConfig) {
@@ -43,6 +47,10 @@ pub fn configure_services(config: &mut web::ServiceConfig) {
 
     // authority
     config.service(authority_by_id);
+
+    // conversion request
+    config.service(conversion_request_form);
+    config.service(submit_document);
     
     //config.service(about);
     config.service(toggle_language);

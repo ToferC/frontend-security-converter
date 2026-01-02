@@ -76,7 +76,7 @@ type Authority {
   creator: User!
   nation: Nation!
   classificationSchemas: [ClassificationSchema!]!
-  mostRecentClassificationSchema: [ClassificationSchema!]!
+  mostRecentClassificationSchema: ClassificationSchema!
 }
 type ClassificationSchema {
   id: UUID!
@@ -521,11 +521,11 @@ type User {
   authority: Authority
 }
 type UserResponse {
-  id: UUID,
+  id: UUID!
   bearer: String!
   role: String!
   email: String!
-  authority_id: UUID
+  authorityId: UUID
 }
 "Input type for filtering audit logs"
 input AuditLogFilter {

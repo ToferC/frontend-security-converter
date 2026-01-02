@@ -275,6 +275,8 @@
                       <a class="dropdown-item" href="/{{ lang }}/user/{{ user_id }}">{{ fluent(key="profile", lang=lang )}}</a>
                       <a class="dropdown-item" href="/{{ lang }}/log_out">{{ fluent(key="logout", lang=lang )}}</a>
                       <div class="dropdown-divider"></div>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/{{ lang }}/conversion_request">Submit Conversion Request</a>
                       {% if role == "admin" %}
                       <a class="dropdown-item" href="/{{ lang }}/user_index">{{ fluent(key="user-index", lang=lang )}}</a>
                       {% endif %}

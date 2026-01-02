@@ -8,6 +8,7 @@ pub mod errors;
 pub mod email;
 pub mod authority;
 pub mod document;
+pub mod conversion_request;
 
 pub use authentication_hander::*;
 pub use base::{index, raw_index};
@@ -19,3 +20,4 @@ pub use email::*;
 pub use errors::*;
 pub use authority::*;
 pub use document::*;
+pub use conversion_request::*;

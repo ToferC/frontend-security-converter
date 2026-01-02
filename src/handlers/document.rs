@@ -4,6 +4,15 @@ use actix_web::{HttpRequest, HttpResponse, HttpMessage, Responder, get, post, we
 use actix_session::{SessionExt};
 use actix_identity::{Identity};
 use serde::{Serialize, Deserialize};
+use chrono::NaiveDateTime;
+
+use ollama_rs::{
+    Ollama, coordinator::Coordinator, generation::{
+        chat::ChatMessage, completion::request::GenerationRequest, parameters::{FormatType, JsonSchema, JsonStructure}
+    }, models::ModelOptions
+};
+
+use uuid::Uuid;
 
 use crate::{AppData, generate_basic_context, graphql};
 
@@ -29,8 +38,8 @@ pub struct DocumentSubmissionForm {
 
 /// The JSON formatted data payload submitted to the API that triggers
 /// a security classification conversion
-#[derive(Debug, Serialize, Deserialize, Clone, InputObject)]
-#[graphql(name = "ConversionRequestInput")]
+#[allow(dead_code)]
+#[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct InsertableConversionRequest {
     pub user_id: Uuid,
     pub authority_id: Uuid,
@@ -44,8 +53,8 @@ pub struct InsertableConversionRequest {
 /// A lightweight struct to accept JSON formatted data from a ConversionRequest
 /// needed to create a NewDataObject
 /// GraphQL input type accepts plain String (will be encrypted internally)
-#[derive(Debug, Clone, Deserialize, Serialize, InputObject)]
-#[graphql(name = "DataObjectInput")]
+#[allow(dead_code)]
+#[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
 pub struct InsertableDataObject {
     pub title: String,        // GraphQL input as plain String
     pub description: String,   // GraphQL input as plain String
@@ -54,8 +63,8 @@ pub struct InsertableDataObject {
 /// A light struct to accept the JSON formatted Metadata included with
 /// a ConversionRequest
 /// GraphQL input type accepts plain String (will be encrypted internally)
-#[derive(Debug, Clone, Deserialize, Serialize, InputObject)]
-#[graphql(name = "MetadataInput")]
+#[allow(dead_code)]
+#[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
 pub struct InsertableMetadata {
     // Global Identifier
     pub identifier: String,
@@ -152,12 +161,34 @@ pub async fn submit_document(
 
 
     // Populate conversion request from LLM
+    let data_obj_format = FormatType::StructuredJson(Box::new(JsonStructure::new::<InsertableDataObject>()));
 
+    let metadata_format = FormatType::StructuredJson(Box::new(JsonStructure::new::<InsertableMetadata>()));
+
+    let model = "ministral-3:14b".to_owned();
+    let prompt = "Take the data from document to populate data object".to_string();
+
+    let res = data.llm
+        .generate(
+            GenerationRequest::new(
+                model, 
+                prompt)
+        .format(data_obj_format)
+        .options(ModelOptions::default().temperature(0.0)),
+        )
+        .await
+        .expect("Unable to retrieve LLM generated content");
+
+    dbg!(&res.response);
+
+    let resp: InsertableDataObject = serde_json::from_str(&res.response)
+        .expect("Unable to derive InsertableDataObject from LLM");
 
     // Render validation form
              
-     ctx.insert("conversion_request", &conversion_request);
+    //ctx.insert("conversion_request", &conversion_request);
      
-    let rendered = data.tmpl.render("document_review.html", &ctx).unwrap();
+    let rendered = data.tmpl.render("index.html", &ctx).unwrap();
     HttpResponse::Ok().body(rendered)
 }
+

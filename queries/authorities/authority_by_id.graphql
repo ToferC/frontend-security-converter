@@ -5,8 +5,13 @@ query AuthorityById($id:UUID!) {
     name
     email
     phone
-    classificationSchemas {
+    mostRecentClassificationSchema {
       id
+      fromNatoUnclassified
+      fromNatoRestricted
+      fromNatoConfidential
+      fromNatoSecret
+      fromNatoTopSecret
       toNatoUnclassified
       toNatoRestricted
       toNatoConfidential

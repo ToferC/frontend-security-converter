@@ -4,6 +4,9 @@
         <div class="col m-md-2 m-1">
             <h1>{{ fluent(key="welcome-to", lang=lang) }}</h1>
 
+            <a class="button" href="/{{ lang }}/conversion_request">Submit Conversion Request</a>
+
+
             <h2>Authority</h2>
             {% for authority in authorities %}
                 <li><a href="/{{ lang }}/authority/{{ authority.id }}">{{ authority.name }}</a></li>
@@ -13,112 +16,6 @@
             <h3>Search User by name: </h3>
                 <input id="personSearchbar" class="form-control" type="text" placeholder="Enter name here" aria-label="Search Person">
                 <button class="btn btn-dark" id="peopleSearch">Search</button>
-
-            <hr>
-            <h3>Enter Document</h3>
-                <div class="input-group">
-                    <form action="/{{ lang }}/submit_document{{ user_id }}" method=POST id="contentForm" name="contentForm">
-                        <div class="mb-3">
-                            <label for="targetNations" class="form-label">Target NATO Nations</label><br>
-                            <select id="targetNations" name="targetNations" class="form-select" multiple size="10" required>
-                                <option value="ALB">ALB - Albania</option>
-                                <option value="BEL">BEL - Belgium</option>
-                                <option value="BGR">BGR - Bulgaria</option>
-                                <option value="CAN">CAN - Canada</option>
-                                <option value="HRV">HRV - Croatia</option>
-                                <option value="CZE">CZE - Czech Republic</option>
-                                <option value="DNK">DNK - Denmark</option>
-                                <option value="EST">EST - Estonia</option>
-                                <option value="FIN">FIN - Finland</option>
-                                <option value="FRA">FRA - France</option>
-                                <option value="DEU">DEU - Germany</option>
-                                <option value="GRC">GRC - Greece</option>
-                                <option value="HUN">HUN - Hungary</option>
-                                <option value="ISL">ISL - Iceland</option>
-                                <option value="ITA">ITA - Italy</option>
-                                <option value="LVA">LVA - Latvia</option>
-                                <option value="LTU">LTU - Lithuania</option>
-                                <option value="LUX">LUX - Luxembourg</option>
-                                <option value="MNE">MNE - Montenegro</option>
-                                <option value="NLD">NLD - Netherlands</option>
-                                <option value="MKD">MKD - North Macedonia</option>
-                                <option value="NOR">NOR - Norway</option>
-                                <option value="POL">POL - Poland</option>
-                                <option value="PRT">PRT - Portugal</option>
-                                <option value="ROU">ROU - Romania</option>
-                                <option value="SVK">SVK - Slovakia</option>
-                                <option value="SVN">SVN - Slovenia</option>
-                                <option value="ESP">ESP - Spain</option>
-                                <option value="SWE">SWE - Sweden</option>
-                                <option value="TUR">TUR - Turkey</option>
-                                <option value="GBR">GBR - United Kingdom</option>
-                                <option value="USA">USA - United States</option>
-                            </select>
-                            <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple countries</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="releasableToOrganizations" class="form-label">Releasable to Organizations</label><br>
-                            <select id="releasableToOrganizations" name="releasableToOrganizations" class="form-select" multiple size="5" required>
-                                <option value="NATO" selected>NATO</option>
-                                <option value="EU">EU</option>
-                                <option value="UN">UN</option>
-                                <option value="FVEY">Five Eyes (FVEY)</option>
-                                <option value="AUKUS">AUKUS</option>
-                                <option value="QUAD">Quad</option>
-                            </select>
-                            <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple organizations</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="disclosureCategory" class="form-label">Disclosure Category</label>
-                            <select id="disclosureCategory" name="disclosureCategory" class="form-select" required>
-                                <option value="">Select category...</option>
-                                <option value="Category A">Category A - Public Release</option>
-                                <option value="Category B">Category B - Limited Distribution</option>
-                                <option value="Category C" selected>Category C - Controlled</option>
-                                <option value="Category D">Category D - Restricted</option>
-                                <option value="Category E">Category E - Highly Restricted</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="handlingRestrictions" class="form-label">Handling Restrictions</label>
-                            <select id="handlingRestrictions" name="handlingRestrictions" class="form-select" multiple size="6" required>
-                                <option value="CUI" selected>CUI - Controlled Unclassified Information</option>
-                                <option value="FOUO">FOUO - For Official Use Only</option>
-                                <option value="LES">LES - Law Enforcement Sensitive</option>
-                                <option value="SBU">SBU - Sensitive But Unclassified</option>
-                                <option value="NOFORN">NOFORN - No Foreign Nationals</option>
-                                <option value="PROPIN">PROPIN - Proprietary Information</option>
-                                <option value="ORCON">ORCON - Originator Controlled</option>
-                            </select>
-                            <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple restrictions</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="handlingAuthority" class="form-label">Handling Authority</label>
-                            <select id="handlingAuthority" name="handlingAuthority" class="form-select" required>
-                                <option value="">Select authority...</option>
-                                <option value="32 CFR Part 2002" selected>32 CFR Part 2002 - Controlled Unclassified Information</option>
-                                <option value="EO 13556">EO 13556 - Controlled Unclassified Information</option>
-                                <option value="DoD 5200.1-R">DoD 5200.1-R - Information Security Program</option>
-                                <option value="NIST SP 800-171">NIST SP 800-171 - CUI in Nonfederal Systems</option>
-                                <option value="NATO Security Policy">NATO Security Policy</option>
-                                <option value="STANAG 2591">STANAG 2591 - Military Committee Document Policy</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <textarea id="content" rows="15" cols="60" name="content" class="form-control" placeholder="Enter Markdown document here..." required></textarea>
-                        </div>
-                        <button
-                            class="btn btn-primary"
-                            id="submitDocumentButton"
-                            >Submit</button>
-                        </form>
-                </div>
-                
         </div>
 {% endblock content %}
 
