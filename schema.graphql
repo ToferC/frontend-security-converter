@@ -525,6 +525,7 @@ type UserResponse {
   bearer: String!
   role: String!
   email: String!
+  authority_id: UUID
 }
 "Input type for filtering audit logs"
 input AuditLogFilter {

@@ -35,7 +35,7 @@ pub async fn login_form_input(
     data: web::Data<AppData>,
     req: HttpRequest, 
     form: web::Form<LoginForm>,
-    id: Option<Identity>,
+    _id: Option<Identity>,
 ) -> impl Responder {
 
     let lang = path.into_inner();
@@ -71,6 +71,9 @@ pub async fn login_form_input(
 
     session.insert("session_user", login_data.email.to_owned())
         .expect("Unable to set user name");
+
+    session.insert("authority_id", login_data.authority_id.to_owned())
+        .expect("Unable to set authority_id");
 
     session.insert("bearer", login_data.bearer.to_owned())
         .expect("Unable to set bearer");

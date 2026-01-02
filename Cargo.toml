@@ -49,6 +49,7 @@ fluent-templates = { version = "*", features = ["tera"] }
 
 # email
 sendgrid = "0.17.4"
+ollama-rs = "0.3.3"
 
 [build-dependencies]
 static-files = "0.3.1"

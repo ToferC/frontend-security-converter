@@ -10,6 +10,7 @@ use actix_web::cookie::Key;
 use actix_web_static_files::ResourceFiles;
 use reqwest::Client;
 use std::sync::Arc;
+use ollama_rs::Ollama;
 
 use frontend::handlers;
 use frontend::AppData;
@@ -57,12 +58,16 @@ async fn main() -> std::io::Result<()> {
 
     let cookie_secret_key: Key = Key::from(&cookie_secret.as_bytes());
 
+    // Configure templates via Tera
+
     let mut tera = Tera::new(
         "templates/**/*").unwrap();
 
     tera.register_filter("snake_case", snake_case);
     tera.full_reload().expect("Error running auto-reload with Tera");
     tera.register_function("fluent", FluentLoader::new(&*LOCALES));
+
+    // Set API target
 
     let api_url = format!("{}", api_target);
     
@@ -72,10 +77,15 @@ async fn main() -> std::io::Result<()> {
     // Create Reqwest Client
     let client = Arc::new(Client::new());
     
+    // Create Ollama connection for local LLM
+    let ollama = Ollama::default();
+
+    // Initialize AppData
     let data = web::Data::new(AppData {
         tmpl: tera,
         api_url: api_url,
         client: client,
+        llm: ollama,
     });
 
     HttpServer::new(move || {

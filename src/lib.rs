@@ -3,25 +3,26 @@ pub mod handlers;
 pub mod graphql;
 pub mod errors;
 
-use actix_web::Error;
 use tera::{Tera, Context};
 use actix_identity::Identity;
 use actix_session::Session;
 use reqwest::Client;
 use std::sync::Arc;
+use ollama_rs::Ollama;
 
 
 extern crate strum;
 #[macro_use]
 extern crate strum_macros;
 
-const APP_NAME: &str = "Epifront";
+const APP_NAME: &str = "NCC-frontend";
 
 #[derive(Clone, Debug)]
 pub struct AppData {
     pub tmpl: Tera,
     pub api_url: String,
     pub client: Arc<Client>,
+    pub llm: Ollama,
 }
 
 /// Generate context, session_user, role and node_names from id and lang
@@ -42,11 +43,12 @@ pub fn generate_basic_context(
     // Get session data and add to context
     println!("Getting Session data and adding to Context");
 
-    let (role, user_id) = extract_session_data(session);
+    let (role, user_id, authority_id) = extract_session_data(session);
 
     ctx.insert("session_user", &session_user);
     ctx.insert("role", &role);
     ctx.insert("user_id", &user_id);
+    ctx.insert("authority_id", &authority_id);
 
     let validated_lang = match lang {
         "fr" => "fr",
@@ -60,7 +62,7 @@ pub fn generate_basic_context(
     ctx
 }
 
-pub fn extract_session_data(session: &Session) -> (String, String) {
+pub fn extract_session_data(session: &Session) -> (String, String, String) {
 
     let role_data = session.get::<String>("role");
 
@@ -78,8 +80,16 @@ pub fn extract_session_data(session: &Session) -> (String, String) {
         Err(_) => "".to_string(),
     };
 
-    println!("{}-{}", &role, &user_id);
+    let authority_data = session.get::<String>("authority_id");
 
-    (role, user_id)
+    let authority_id = match authority_data {
+        Ok(Some(a)) => a,
+        Ok(None) => "".to_string(),
+        Err(_) => "".to_string(),
+    };
+
+    println!("{}-{}-{}", &role, &user_id, &authority_id);
+
+    (role, user_id, authority_id)
 }
 

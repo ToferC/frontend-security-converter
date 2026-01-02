@@ -7,6 +7,7 @@ pub mod utility;
 pub mod errors;
 pub mod email;
 pub mod authority;
+pub mod document;
 
 pub use authentication_hander::*;
 pub use base::{index, raw_index};
@@ -17,3 +18,4 @@ pub use utility::*;
 pub use email::*;
 pub use errors::*;
 pub use authority::*;
+pub use document::*;
