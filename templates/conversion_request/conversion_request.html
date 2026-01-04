@@ -11,11 +11,11 @@
             <hr>
             <h3>Enter Document</h3>
                 <div class="input-group">
-                    <form action="/{{ lang }}/submit_document/{{ user_id }}" method=POST id="contentForm" name="contentForm">
+                    <form action="/{{ lang }}/submit_document" method=POST id="contentForm" name="contentForm">
 
                         <div class="mb-3">
-                            <label for="securityClearanceLevel" class="form-label">Security Clearance Level</label>
-                            <select id="securityClearanceLevel" name="securityClearanceLevel" class="form-select" placeholder="Select clearance level..." required>
+                            <label for="securityClassificationLevel" class="form-label">Security Clearance Level</label>
+                            <select id="securityClassificationLevel" name="securityClassificationLevel" class="form-select" placeholder="Select classification level..." required>
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoUnclassified }}">{{ authority.mostRecentClassificationSchema.toNatoUnclassified }}</option>
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoRestricted }}">{{ authority.mostRecentClassificationSchema.toNatoRestricted }}</option>
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoConfidential }}">{{ authority.mostRecentClassificationSchema.toNatoConfidential }}</option>
@@ -23,58 +23,221 @@
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoTopSecret }}">{{ authority.mostRecentClassificationSchema.toNatoTopSecret }}</option>
                             </select>
                         </div>
+                        <hr>
 
-                        <div class="mb-3">
-                            <label for="targetNations" class="form-label">Target NATO Nations</label><br>
-                            <select id="targetNations" name="targetNations" class="form-select" multiple size="10" required>
-                                <option value="ALB">ALB - Albania</option>
-                                <option value="BEL">BEL - Belgium</option>
-                                <option value="BGR">BGR - Bulgaria</option>
-                                <option value="CAN">CAN - Canada</option>
-                                <option value="HRV">HRV - Croatia</option>
-                                <option value="CZE">CZE - Czech Republic</option>
-                                <option value="DNK">DNK - Denmark</option>
-                                <option value="EST">EST - Estonia</option>
-                                <option value="FIN">FIN - Finland</option>
-                                <option value="FRA">FRA - France</option>
-                                <option value="DEU">DEU - Germany</option>
-                                <option value="GRC">GRC - Greece</option>
-                                <option value="HUN">HUN - Hungary</option>
-                                <option value="ISL">ISL - Iceland</option>
-                                <option value="ITA">ITA - Italy</option>
-                                <option value="LVA">LVA - Latvia</option>
-                                <option value="LTU">LTU - Lithuania</option>
-                                <option value="LUX">LUX - Luxembourg</option>
-                                <option value="MNE">MNE - Montenegro</option>
-                                <option value="NLD">NLD - Netherlands</option>
-                                <option value="MKD">MKD - North Macedonia</option>
-                                <option value="NOR">NOR - Norway</option>
-                                <option value="POL">POL - Poland</option>
-                                <option value="PRT">PRT - Portugal</option>
-                                <option value="ROU">ROU - Romania</option>
-                                <option value="SVK">SVK - Slovakia</option>
-                                <option value="SVN">SVN - Slovenia</option>
-                                <option value="ESP">ESP - Spain</option>
-                                <option value="SWE">SWE - Sweden</option>
-                                <option value="TUR">TUR - Turkey</option>
-                                <option value="GBR">GBR - United Kingdom</option>
-                                <option value="USA">USA - United States</option>
-                            </select>
-                            <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple countries</small>
+                        <div class="col-md-4">
+                        <label for="targetNations" class="form-label">Target Nations</label><br>
+                        <div class="input-grp">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="alb" id="flexSwitchCheckALB">
+                                <label class="form-check-label" for="flexSwitchCheckALB">Albania (ALB)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="aus" id="flexSwitchCheckAUS">
+                                <label class="form-check-label" for="flexSwitchCheckAUS">Australia (AUS)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="bel" id="flexSwitchCheckBEL">
+                                <label class="form-check-label" for="flexSwitchCheckBEL">Belgium (BEL)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="bgr" id="flexSwitchCheckBGR">
+                                <label class="form-check-label" for="flexSwitchCheckBGR">Bulgaria (BGR)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="can" id="flexSwitchCheckCAN">
+                                <label class="form-check-label" for="flexSwitchCheckCAN">Canada (CAN)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="hrv" id="flexSwitchCheckHRV">
+                                <label class="form-check-label" for="flexSwitchCheckHRV">Croatia (HRV)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="cze" id="flexSwitchCheckCZE">
+                                <label class="form-check-label" for="flexSwitchCheckCZE">Czech Republic (CZE)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="dnk" id="flexSwitchCheckDNK">
+                                <label class="form-check-label" for="flexSwitchCheckDNK">Denmark (DNK)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="est" id="flexSwitchCheckEST">
+                                <label class="form-check-label" for="flexSwitchCheckEST">Estonia (EST)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="fin" id="flexSwitchCheckFIN">
+                                <label class="form-check-label" for="flexSwitchCheckFIN">Finland (FIN)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="fra" id="flexSwitchCheckFRA">
+                                <label class="form-check-label" for="flexSwitchCheckFRA">France (FRA)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="deu" id="flexSwitchCheckDEU">
+                                <label class="form-check-label" for="flexSwitchCheckDEU">Germany (DEU)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="grc" id="flexSwitchCheckGRC">
+                                <label class="form-check-label" for="flexSwitchCheckGRC">Greece (GRC)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="hun" id="flexSwitchCheckHUN">
+                                <label class="form-check-label" for="flexSwitchCheckHUN">Hungary (HUN)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="isl" id="flexSwitchCheckISL">
+                                <label class="form-check-label" for="flexSwitchCheckISL">Iceland (ISL)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="ita" id="flexSwitchCheckITA">
+                                <label class="form-check-label" for="flexSwitchCheckITA">Italy (ITA)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="lva" id="flexSwitchCheckLVA">
+                                <label class="form-check-label" for="flexSwitchCheckLVA">Latvia (LVA)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="ltu" id="flexSwitchCheckLTU">
+                                <label class="form-check-label" for="flexSwitchCheckLTU">Lithuania (LTU)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="lux" id="flexSwitchCheckLUX">
+                                <label class="form-check-label" for="flexSwitchCheckLUX">Luxembourg (LUX)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="mne" id="flexSwitchCheckMNE">
+                                <label class="form-check-label" for="flexSwitchCheckMNE">Montenegro (MNE)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="nld" id="flexSwitchCheckNLD">
+                                <label class="form-check-label" for="flexSwitchCheckNLD">Netherlands (NLD)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="nzl" id="flexSwitchCheckNZL">
+                                <label class="form-check-label" for="flexSwitchCheckNZL">New Zealand (NZL)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="mkd" id="flexSwitchCheckMKD">
+                                <label class="form-check-label" for="flexSwitchCheckMKD">North Macedonia (MKD)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="nor" id="flexSwitchCheckNOR">
+                                <label class="form-check-label" for="flexSwitchCheckNOR">Norway (NOR)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="pol" id="flexSwitchCheckPOL">
+                                <label class="form-check-label" for="flexSwitchCheckPOL">Poland (POL)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="prt" id="flexSwitchCheckPRT">
+                                <label class="form-check-label" for="flexSwitchCheckPRT">Portugal (PRT)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="rou" id="flexSwitchCheckROU">
+                                <label class="form-check-label" for="flexSwitchCheckROU">Romania (ROU)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="svk" id="flexSwitchCheckSVK">
+                                <label class="form-check-label" for="flexSwitchCheckSVK">Slovakia (SVK)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="svn" id="flexSwitchCheckSVN">
+                                <label class="form-check-label" for="flexSwitchCheckSVN">Slovenia (SVN)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="esp" id="flexSwitchCheckESP">
+                                <label class="form-check-label" for="flexSwitchCheckESP">Spain (ESP)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="swe" id="flexSwitchCheckSWE">
+                                <label class="form-check-label" for="flexSwitchCheckSWE">Sweden (SWE)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="tur" id="flexSwitchCheckTUR">
+                                <label class="form-check-label" for="flexSwitchCheckTUR">Turkey (TUR)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="gbr" id="flexSwitchCheckGBR">
+                                <label class="form-check-label" for="flexSwitchCheckGBR">United Kingdom (GBR)</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="usa" id="flexSwitchCheckUSA">
+                                <label class="form-check-label" for="flexSwitchCheckUSA">United States (USA)</label>
+                            </div>
+                            </div>
                         </div>
+
+                        <hr>
 
                         <div class="mb-3">
                             <label for="releasableToOrganizations" class="form-label">Releasable to Organizations</label><br>
-                            <select id="releasableToOrganizations" name="releasableToOrganizations" class="form-select" multiple size="5" required>
-                                <option value="NATO" selected>NATO</option>
-                                <option value="EU">EU</option>
-                                <option value="UN">UN</option>
-                                <option value="FVEY">Five Eyes (FVEY)</option>
-                                <option value="AUKUS">AUKUS</option>
-                                <option value="QUAD">Quad</option>
-                            </select>
-                            <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple organizations</small>
+                            <div class="input-grp">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="nato" id="flexSwitchCheckNATO" checked>
+                                    <label class="form-check-label" for="flexSwitchCheckNATO">NATO</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="eu" id="flexSwitchCheckEU">
+                                    <label class="form-check-label" for="flexSwitchCheckEU">EU</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="un" id="flexSwitchCheckUN">
+                                    <label class="form-check-label" for="flexSwitchCheckUN">UN</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="fvey" id="flexSwitchCheckFVEY">
+                                    <label class="form-check-label" for="flexSwitchCheckFVEY">Five Eyes (FVEY)</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="aukus" id="flexSwitchCheckAUKUS">
+                                    <label class="form-check-label" for="flexSwitchCheckAUKUS">AUKUS</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="quad" id="flexSwitchCheckQUAD">
+                                    <label class="form-check-label" for="flexSwitchCheckQUAD">Quad</label>
+                                </div>
+                            </div>
                         </div>
+
+                        <hr>
 
                         <div class="mb-3">
                             <label for="disclosureCategory" class="form-label">Disclosure Category</label>
@@ -89,17 +252,43 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="handlingRestrictions" class="form-label">Handling Restrictions</label>
-                            <select id="handlingRestrictions" name="handlingRestrictions" class="form-select" multiple size="6" required>
-                                <option value="CUI" selected>CUI - Controlled Unclassified Information</option>
-                                <option value="FOUO">FOUO - For Official Use Only</option>
-                                <option value="LES">LES - Law Enforcement Sensitive</option>
-                                <option value="SBU">SBU - Sensitive But Unclassified</option>
-                                <option value="NOFORN">NOFORN - No Foreign Nationals</option>
-                                <option value="PROPIN">PROPIN - Proprietary Information</option>
-                                <option value="ORCON">ORCON - Originator Controlled</option>
-                            </select>
-                            <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple restrictions</small>
+                            <label for="handlingRestrictions" class="form-label">Handling Restrictions</label><br>
+                            <div class="input-grp">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="cui" id="flexSwitchCheckCUI" checked>
+                                    <label class="form-check-label" for="flexSwitchCheckCUI">CUI - Controlled Unclassified Information</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="fouo" id="flexSwitchCheckFOUO">
+                                    <label class="form-check-label" for="flexSwitchCheckFOUO">FOUO - For Official Use Only</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="les" id="flexSwitchCheckLES">
+                                    <label class="form-check-label" for="flexSwitchCheckLES">LES - Law Enforcement Sensitive</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="sbu" id="flexSwitchCheckSBU">
+                                    <label class="form-check-label" for="flexSwitchCheckSBU">SBU - Sensitive But Unclassified</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="noforn" id="flexSwitchCheckNOFORN">
+                                    <label class="form-check-label" for="flexSwitchCheckNOFORN">NOFORN - No Foreign Nationals</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="propin" id="flexSwitchCheckPROPIN">
+                                    <label class="form-check-label" for="flexSwitchCheckPROPIN">PROPIN - Proprietary Information</label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="orcon" id="flexSwitchCheckORCON">
+                                    <label class="form-check-label" for="flexSwitchCheckORCON">ORCON - Originator Controlled</label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -115,9 +304,31 @@
                             </select>
                         </div>
 
+                        <hr>
+
                         <div class="mb-3">
-                            <textarea id="content" rows="15" cols="60" name="content" class="form-control" placeholder="Enter Markdown document here..." required></textarea>
+                            <label for="markdownFile" class="form-label">Upload Markdown File (Optional)</label>
+                            <input type="file" id="markdownFile" class="form-control" accept=".md,.markdown,.txt" onchange="loadMarkdownFile(event)">
+                            <small class="form-text text-muted">Select a .md, .markdown, or .txt file to load into the editor</small>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Document Content</label>
+                            <textarea id="content" rows="15" cols="60" name="content" class="form-control" placeholder="Enter Markdown document here or upload a file above..." required></textarea>
+                        </div>
+
+                        <script>
+                            function loadMarkdownFile(event) {
+                                const file = event.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        document.getElementById('content').value = e.target.result;
+                                    };
+                                    reader.readAsText(file);
+                                }
+                            }
+                        </script>
                         <button
                             class="btn btn-primary"
                             id="submitDocumentButton"

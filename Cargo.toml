@@ -51,6 +51,7 @@ fluent-templates = { version = "*", features = ["tera"] }
 sendgrid = "0.17.4"
 ollama-rs = "0.3.3"
 schemars = { version = "1.2", features = ["chrono04", "uuid1"] }
+actix-multipart-extract = "0.1.5"
 
 [build-dependencies]
 static-files = "0.3.1"

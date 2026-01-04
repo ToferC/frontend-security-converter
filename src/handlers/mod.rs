@@ -7,7 +7,7 @@ pub mod utility;
 pub mod errors;
 pub mod email;
 pub mod authority;
-pub mod document;
+pub mod conversion_response;
 pub mod conversion_request;
 
 pub use authentication_hander::*;
@@ -19,5 +19,5 @@ pub use utility::*;
 pub use email::*;
 pub use errors::*;
 pub use authority::*;
-pub use document::*;
+pub use conversion_response::*;
 pub use conversion_request::*;

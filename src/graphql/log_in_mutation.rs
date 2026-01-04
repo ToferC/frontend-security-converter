@@ -28,7 +28,11 @@ pub async fn login(email: String, password: String, api_url: &str, client: Arc<C
         auth_data: auth_data,
     });
 
-    let res = client.post(api_url).json(&request_body).send().await?;
+    let res = client
+        .post(api_url)
+        .json(&request_body)
+        .send()
+        .await?;
 
     let response_body: Response<log_in::ResponseData> = res.json().await?;
 
