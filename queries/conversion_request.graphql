@@ -6,6 +6,8 @@ mutation SubmitConversion($input: ConversionRequestInput!) {
       targetNationCodes
     }
     response {
+      conversionRequestId
+      subjectDataId
       natoEquivalent
       targetNationClassifications
     }

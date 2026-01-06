@@ -6,22 +6,14 @@
                 <h1 class="mb-4">
                     <i class="bi bi-shield-check"></i> Security Classification Conversion Response
                 </h1>
+                
+                {% set response = conversion_response.submitConversionRequest %}
+                
+                {% if response %}
 
-                request {
-                    id
-                    sourceNationCode
-                    targetNationCodes
-                    }
-                    response {
-                    natoEquivalent
-                    targetNationClassifications
-                    }
-                    success
-                    message
-                }
-
-                {% set response = conversion_response %}
-                {% if response.id %}
+                {% for k, v in response %}
+                    <li>{{ k }}: {{ v }}</li>
+                {% endfor %}
 
                     <!-- Status Alert -->
                     {% if response.success %}
@@ -73,7 +65,11 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-12 mb-4">
+                                <div class="col-md-6">
+                                    <p><strong>Your Unique API Identifier:</strong></p>
+                                    <p class="font-monospace text-muted">{{ response.response.subjectDataId }}</p>
+                                </div>
+                                <div class="col-md-6 mb-4">
                                     <h6 class="text-uppercase text-muted">NATO Equivalent Classification</h6>
                                     <div class="p-3 bg-light border border-success rounded">
                                         <h4 class="text-success mb-0">

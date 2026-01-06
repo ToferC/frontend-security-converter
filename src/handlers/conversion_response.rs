@@ -238,8 +238,6 @@ pub async fn submit_document(
 
     let session = req.get_session();
 
-    println!("{:?}", &form);
-
     // validate form has data or re-load form
     if form.content.is_empty() {
         println!("Form is empty");
