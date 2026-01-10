@@ -23,5 +23,49 @@ query AuthorityById($id:UUID!) {
       nationName
       nationCode
     }
+    conversionRequests {
+      id
+      authorityId
+      dataObjectId
+      sourceNationClassification
+      sourceNationCode
+      createdAt
+      updatedAt
+      completedAt
+      dataObject {
+        title
+        description
+      }
+      metadata {
+        identifier
+        authorizationReference
+        authorizationReferenceDate
+        format
+        formatSize
+        securityClassification
+        releasableToCountries
+        releasableToOrganizations
+        releasableToCategories
+        disclosureCategory
+        handlingRestrictions
+        handlingAuthority
+        noHandlingRestrictions
+        domain
+        tags
+        createdAt
+        custodianOrganization {
+          id
+          name
+        }
+        originatingOrganization {
+          id
+          name
+        }
+      }
+      conversionResponse {
+        conversionRequestId
+        natoEquivalent
+      }
+    }
   }
 }

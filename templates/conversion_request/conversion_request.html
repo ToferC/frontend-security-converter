@@ -2,22 +2,35 @@
 
 {% block content %}
         <div class="col m-md-2 m-1">
-            <h1>{{ fluent(key="conversion-request", lang=lang) }}</h1>
+            <div class="mb-4">
+                <h1 class="display-5 mb-1">{{ fluent(key="conversion-request", lang=lang) }}</h1>
+                <p class="text-muted">Submit a document for NATO classification conversion</p>
+            </div>
 
-            <hr>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h2 class="mb-0 h5">Authority Information</h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Nation:</dt>
+                        <dd class="col-sm-9">{{ authority.nation.nationName }}</dd>
+                        <dt class="col-sm-3">Code:</dt>
+                        <dd class="col-sm-9"><span class="badge bg-secondary">{{ authority.nation.nationCode }}</span></dd>
+                    </dl>
+                </div>
+            </div>
 
-            <h2>Authority</h2>
-            <li>Nation: {{ authority.nation.nationName }}</li>
-            <li>Code: {{ authority.nation.nationCode }}</li>
+            <form action="/{{ lang }}/submit_document" method=POST id="contentForm" name="contentForm">
 
-            <hr>
-            <h3>Enter Document</h3>
-                <div class="input-group">
-                    <form action="/{{ lang }}/submit_document" method=POST id="contentForm" name="contentForm">
-
-                        <div class="mb-3">
-                            <label for="securityClassificationLevel" class="form-label">Security Clearance Level</label>
-                            <select id="securityClassificationLevel" name="securityClassificationLevel" class="form-select" placeholder="Select classification level..." required>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0 h5">Classification Level</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-0">
+                            <label for="securityClassificationLevel" class="form-label fw-bold">Security Clearance Level</label>
+                            <select id="securityClassificationLevel" name="securityClassificationLevel" class="form-select form-select-lg" placeholder="Select classification level..." required>
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoUnclassified }}">{{ authority.mostRecentClassificationSchema.toNatoUnclassified }}</option>
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoRestricted }}">{{ authority.mostRecentClassificationSchema.toNatoRestricted }}</option>
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoConfidential }}">{{ authority.mostRecentClassificationSchema.toNatoConfidential }}</option>
@@ -25,11 +38,16 @@
                                 <option value="{{ authority.mostRecentClassificationSchema.toNatoTopSecret }}">{{ authority.mostRecentClassificationSchema.toNatoTopSecret }}</option>
                             </select>
                         </div>
-                        <hr>
+                    </div>
+                </div>
 
-                        <div class="mb-3">
-                            <label for="targetNations" class="form-label fw-bold">Target Nations</label>
-                            <small class="text-muted d-block mb-2">Select the nations to which this document may be released</small>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0 h5">Target Nations</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Select the nations to which this document may be released</p>
+                        <div class="mb-0">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-check form-switch">
@@ -177,12 +195,16 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <hr>
-
-                        <div class="mb-3">
-                            <label for="releasableToOrganizations" class="form-label fw-bold">Releasable to Organizations</label>
-                            <small class="text-muted d-block mb-2">Select international organizations authorized to receive this document</small>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0 h5">Releasable to Organizations</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Select international organizations authorized to receive this document</p>
+                        <div class="mb-0">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-check form-switch">
@@ -216,12 +238,17 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <hr>
-
-                        <div class="mb-3">
-                            <label for="disclosureCategory" class="form-label">Disclosure Category</label>
-                            <select id="disclosureCategory" name="disclosureCategory" class="form-select" required>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h3 class="mb-0 h5">Disclosure & Handling Controls</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label for="disclosureCategory" class="form-label fw-bold">Disclosure Category</label>
+                            <select id="disclosureCategory" name="disclosureCategory" class="form-select form-select-lg" required>
                                 <option value="">Select category...</option>
                                 <option value="Category A">Category A - Public Release</option>
                                 <option value="Category B">Category B - Limited Distribution</option>
@@ -231,9 +258,9 @@
                             </select>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="handlingRestrictions" class="form-label fw-bold">Handling Restrictions</label>
-                            <small class="text-muted d-block mb-2">Select applicable handling caveats and dissemination controls</small>
+                            <p class="text-muted small mb-3">Select applicable handling caveats and dissemination controls</p>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-check form-switch">
@@ -270,9 +297,9 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="handlingAuthority" class="form-label">Handling Authority</label>
-                            <select id="handlingAuthority" name="handlingAuthority" class="form-select" required>
+                        <div class="mb-0">
+                            <label for="handlingAuthority" class="form-label fw-bold">Handling Authority</label>
+                            <select id="handlingAuthority" name="handlingAuthority" class="form-select form-select-lg" required>
                                 <option value="">Select authority...</option>
                                 <option value="32 CFR Part 2002" selected>32 CFR Part 2002 - Controlled Unclassified Information</option>
                                 <option value="EO 13556">EO 13556 - Controlled Unclassified Information</option>
@@ -282,38 +309,45 @@
                                 <option value="STANAG 2591">STANAG 2591 - Military Committee Document Policy</option>
                             </select>
                         </div>
+                    </div>
+                </div>
 
-                        <hr>
-
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h3 class="mb-0 h5">Document Content</h3>
+                    </div>
+                    <div class="card-body">
                         <div class="mb-3">
-                            <label for="markdownFile" class="form-label">Upload Markdown File (Optional)</label>
-                            <input type="file" id="markdownFile" class="form-control" accept=".md,.markdown,.txt" onchange="loadMarkdownFile(event)">
+                            <label for="markdownFile" class="form-label fw-bold">Upload Markdown File (Optional)</label>
+                            <input type="file" id="markdownFile" class="form-control form-control-lg" accept=".md,.markdown,.txt" onchange="loadMarkdownFile(event)">
                             <small class="form-text text-muted">Select a .md, .markdown, or .txt file to load into the editor</small>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="content" class="form-label">Document Content</label>
+                        <div class="mb-0">
+                            <label for="content" class="form-label fw-bold">Document Content</label>
                             <textarea id="content" rows="15" cols="60" name="content" class="form-control" placeholder="Enter Markdown document here or upload a file above..." required></textarea>
                         </div>
-
-                        <script>
-                            function loadMarkdownFile(event) {
-                                const file = event.target.files[0];
-                                if (file) {
-                                    const reader = new FileReader();
-                                    reader.onload = function(e) {
-                                        document.getElementById('content').value = e.target.result;
-                                    };
-                                    reader.readAsText(file);
-                                }
-                            }
-                        </script>
-                        <button
-                            class="btn btn-primary"
-                            id="submitDocumentButton"
-                            >Submit</button>
-                        </form>
+                    </div>
                 </div>
-                
+
+                <script>
+                    function loadMarkdownFile(event) {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                document.getElementById('content').value = e.target.result;
+                            };
+                            reader.readAsText(file);
+                        }
+                    }
+                </script>
+
+                <div class="d-grid gap-2 mb-4">
+                    <button class="btn btn-primary btn-lg shadow" id="submitDocumentButton" type="submit">
+                        <i class="bi bi-send-fill"></i> Submit Conversion Request
+                    </button>
+                </div>
+            </form>
         </div>
 {% endblock content %}
