@@ -9,6 +9,7 @@ pub mod email;
 pub mod authority;
 pub mod conversion_response;
 pub mod conversion_request;
+pub mod analytics;
 
 pub use authentication_hander::*;
 pub use base::{index, raw_index};
@@ -21,3 +22,4 @@ pub use errors::*;
 pub use authority::*;
 pub use conversion_response::*;
 pub use conversion_request::*;
+pub use analytics::*;

@@ -33,6 +33,9 @@ use crate::handlers::{
     validate_conversion,
     confirm_conversion,
 
+    // analytics
+    authority_analytics,
+
 };
 
 pub fn configure_services(config: &mut web::ServiceConfig) {
@@ -55,7 +58,10 @@ pub fn configure_services(config: &mut web::ServiceConfig) {
     config.service(submit_document);
     config.service(validate_conversion);
     config.service(confirm_conversion);
-    
+
+    // analytics
+    config.service(authority_analytics);
+
     //config.service(about);
     config.service(toggle_language);
     config.service(toggle_language_index);
