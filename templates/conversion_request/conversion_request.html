@@ -341,12 +341,35 @@
                             reader.readAsText(file);
                         }
                     }
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const form = document.getElementById('contentForm');
+                        const submitButton = document.getElementById('submitDocumentButton');
+                        const spinnerContainer = document.getElementById('spinnerContainer');
+
+                        form.addEventListener('submit', function(e) {
+                            submitButton.style.display = 'none';
+                            spinnerContainer.style.display = 'block';
+                        });
+                    });
                 </script>
 
                 <div class="d-grid gap-2 mb-4">
                     <button class="btn btn-primary btn-lg shadow" id="submitDocumentButton" type="submit">
                         <i class="bi bi-send-fill"></i> Submit Conversion Request
                     </button>
+                </div>
+
+                <div id="spinnerContainer" class="text-center mb-4" style="display: none;">
+                    <div class="card shadow-sm border-info">
+                        <div class="card-body py-5">
+                            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="text-primary mb-2">Processing Request</h5>
+                            <p class="text-muted mb-0">Your document is being analyzed by the LLM. Please wait...</p>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
