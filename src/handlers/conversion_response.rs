@@ -4,18 +4,17 @@ use actix_web::{HttpRequest, HttpResponse, Responder, get, post, web};
 use actix_session::{SessionExt};
 use actix_identity::{Identity};
 use serde::{Serialize, Deserialize};
-use chrono::{Duration, NaiveDateTime};
+use chrono::{NaiveDateTime};
 
 use ollama_rs::{
-    Ollama, coordinator::Coordinator, generation::{
-        chat::ChatMessage, completion::request::GenerationRequest, parameters::{FormatType, JsonSchema, JsonStructure}
+    Ollama, generation::{
+        completion::request::GenerationRequest, parameters::{FormatType, JsonSchema, JsonStructure}
     }, models::ModelOptions
 };
 
-use serde_json::from_str;
 use uuid::Uuid;
 
-use crate::{AppData, generate_basic_context, graphql::{self, AuthorityById, get_authority_by_id, submit_conversion_request, user}};
+use crate::{AppData, generate_basic_context, graphql::{get_authority_by_id, submit_conversion_request}};
 
 #[derive(Deserialize, Debug, Serialize)]
 pub struct DocumentSubmissionForm {
@@ -244,7 +243,7 @@ pub async fn submit_document(
         return HttpResponse::Found().append_header(("Location", format!("/{}", &lang))).finish()
     };
 
-    let mut ctx = generate_basic_context(id, &lang, req.uri().path(), &session);
+    let _ctx = generate_basic_context(id, &lang, req.uri().path(), &session);
 
     let bearer = match req.get_session().get::<String>("bearer").unwrap() {
         Some(s) => s,

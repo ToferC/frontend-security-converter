@@ -2,12 +2,14 @@
 
 use serde::{Deserialize};
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct UserForm {
     user_name: String,
     email: String,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct AdminUserForm {
     user_name: String,

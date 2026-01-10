@@ -1,12 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct LoginForm {
     pub email: String,
     pub password: String,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct RegisterForm {
     user_name: String,
@@ -14,11 +15,13 @@ pub struct RegisterForm {
     password: String,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct VerifyForm {
     code: String,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct PasswordForm {
     password: String,
