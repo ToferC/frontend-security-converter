@@ -75,6 +75,7 @@ type Authority {
   expiresAt: NaiveDateTime
   creator: User!
   nation: Nation!
+  conversionRequests: [ConversionRequest!]!
   classificationSchemas: [ClassificationSchema!]!
   mostRecentClassificationSchema: ClassificationSchema!
 }

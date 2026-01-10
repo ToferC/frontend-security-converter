@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use actix_web::{HttpRequest, HttpResponse, HttpMessage, Responder, get, post, web};
+use actix_web::{HttpRequest, HttpResponse, Responder, get, post, web};
 use actix_session::{SessionExt};
 use actix_identity::{Identity};
 use serde::{Serialize, Deserialize};
-use chrono::NaiveDateTime;
+use chrono::{Duration, NaiveDateTime};
 
 use ollama_rs::{
     Ollama, coordinator::Coordinator, generation::{
@@ -12,6 +12,7 @@ use ollama_rs::{
     }, models::ModelOptions
 };
 
+use serde_json::from_str;
 use uuid::Uuid;
 
 use crate::{AppData, generate_basic_context, graphql::{self, AuthorityById, get_authority_by_id, submit_conversion_request, user}};
@@ -116,6 +117,36 @@ impl From<InsertableDataObject> for crate::graphql::submit_conversion::DataObjec
     }
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
+pub struct LLMFields {
+    // Document Title
+    pub title: String,
+    // Two sentence description of the document
+    pub description: String,
+    // Single domain that best represents the content
+    pub domain: Domain,
+    // Up to six tags that help improve understanding the context
+    pub tags: Vec<Option<String>>,
+
+    // Identifier == unique home organization identifier for document
+    pub identifier: String,
+
+    // Authorization Reference - will be encrypted
+    // References the authority document under which release is permitted.
+    pub authorization_reference: Option<String>,
+
+    // Release restrictions
+    pub releasable_to_countries: Option<Vec<Option<String>>>,
+    pub releasable_to_organizations: Option<Vec<Option<String>>>,
+    pub releasable_to_categories: Option<Vec<Option<String>>>,
+    pub disclosure_category: Option<String>,
+
+    // Handling Restrictions
+    pub handling_restrictions: Option<Vec<Option<String>>>,
+    pub handling_authority: Option<String>,
+    pub no_handling_restrictions: Option<bool>,
+}
+
 /// A light struct to accept the JSON formatted Metadata included with
 /// a ConversionRequest
 /// GraphQL input type accepts plain String (will be encrypted internally)
@@ -193,37 +224,6 @@ pub enum Domain {
     AEROSPACE,
     SPECIALOPS,
 }
-
-/*
-target_variables = '{
-  "input": {
-    "userId": "123e4567-e89b-12d3-a456-426614174000",
-    "authorityId": "987e6543-e21b-12d3-a456-426614174000",
-    "dataObject": {
-      "title": "Intelligence Assessment: Eastern Europe",
-      "description": "Comprehensive intelligence report on regional threats"
-    },
-    "metadata": {
-      "identifier": "770e8400-e29b-41d4-a716-446655440002",
-      "originatorOrganizationId": "987e6543-e21b-12d3-a456-426614174000",
-      "custodianOrganizationId": "987e6543-e21b-12d3-a456-426614174000",
-      "format": "application/pdf",
-      "formatSize": 5242880,
-      "securityClassification": "SECRET",
-      "releasableToCountries": ["USA", "GBR", "FRA"],
-      "releasableToOrganizations": ["NATO"],
-      "disclosureCategory": "Category B",
-      "handlingRestrictions": ["CUI", "NOFORN"],
-      "handlingAuthority": "EO 13526",
-      "domain": "INTEL",
-      "tags": ["regional", "threat-assessment", "strategic"]
-    },
-    "sourceNationClassification": "SECRET",
-    "sourceNationCode": "USA",
-    "targetNationCodes": ["GBR", "FRA"]
-  }
-}'
-*/
 
 #[post("/{lang}/submit_document")]
 pub async fn submit_document(
@@ -327,12 +327,16 @@ pub async fn submit_document(
 
     // Use LLLM to generate DataObject
 
-    let data_obj_format = FormatType::StructuredJson(Box::new(JsonStructure::new::<InsertableDataObject>()));
+    let data_obj_format = FormatType::StructuredJson(Box::new(JsonStructure::new::<LLMFields>()));
 
     let model = "ministral-3:14b".to_owned();
-    let prompt = format!("Take the data from document to populate data object: {}", &form.content);
+    let prompt = format!("Take the data from document to populate metadata and data object fields: {}", &form.content);
 
     let ollama = Ollama::default();
+
+    println!("Starting LLM generation using {}", &model);
+
+    let start = chrono::Utc::now();
 
     let data_res = ollama
         .generate(
@@ -345,40 +349,47 @@ pub async fn submit_document(
         .await
         .expect("Unable to retrieve LLM generated content");
 
-    dbg!(&data_res.response);
+    let llm_fields: LLMFields = serde_json::from_str(&data_res.response)
+        .expect("Unable to derive LLMfields from LLM");
 
-    let data_struct: InsertableDataObject = serde_json::from_str(&data_res.response)
-        .expect("Unable to derive InsertableDataObject from LLM");
+    let end = chrono::Utc::now();
+
+    let time_to_generation = end - start;
+    println!("LLM Generation Completed in {} seconds", time_to_generation.abs().num_seconds());
+
+    let data_struct: InsertableDataObject = InsertableDataObject { 
+        title: llm_fields.title, 
+        description: llm_fields.description, 
+    };
 
     println!("{:?}", &data_struct);
 
-    // Use LLM to Generate Metadata
+    let custodian_organization_id = Uuid::parse_str(&authority.id).expect("Unable to convert Str to UUID");
+    let originator_organization_id = Uuid::parse_str(&authority.id).expect("Unable to convert Str to UUID");
+    let security_classification = form.security_classification_level.clone();
 
-    let model = "ministral-3:14b".to_owned();
-    let prompt = format!("Take the data from this form to populate metadata object: {}", &form.content);
+    let today = chrono::Utc::now().naive_utc();
 
-    let metadata_format = FormatType::StructuredJson(Box::new(JsonStructure::new::<InsertableMetadata>()));
-
-    let meta_res = ollama
-        .generate(
-            GenerationRequest::new(
-                model, 
-                prompt)
-        .format(metadata_format)
-        .options(ModelOptions::default().temperature(0.0)),
-        )
-        .await
-        .expect("Unable to retrieve LLM generated content");
-
-    dbg!(&meta_res.response);
-
-    let mut meta_struct: InsertableMetadata = serde_json::from_str(&meta_res.response)
-        .expect("Unable to derive InsertableDataObject from LLM");
-
-    meta_struct.custodian_organization_id = Uuid::parse_str(&authority.id).expect("Unable to convert Str to UUID");
-    meta_struct.originator_organization_id = Uuid::parse_str(&authority.id).expect("Unable to convert Str to UUID");
-    meta_struct.security_classification = form.security_classification_level.clone();
-
+    let meta_struct: InsertableMetadata = InsertableMetadata { 
+        identifier: llm_fields.identifier, 
+        authorization_reference: llm_fields.authorization_reference, 
+        authorization_reference_date: Some(today), 
+        originator_organization_id: custodian_organization_id, 
+        custodian_organization_id: originator_organization_id, 
+        format: "Markdown".to_string(), 
+        format_size: Some(form.content.len() as i64), 
+        security_classification: security_classification, 
+        releasable_to_countries: llm_fields.releasable_to_countries, 
+        releasable_to_organizations: llm_fields.releasable_to_organizations, 
+        releasable_to_categories: llm_fields.releasable_to_categories, 
+        disclosure_category: llm_fields.disclosure_category, 
+        handling_restrictions: llm_fields.handling_restrictions, 
+        handling_authority: llm_fields.handling_authority, 
+        no_handling_restrictions: llm_fields.no_handling_restrictions, 
+        domain: llm_fields.domain, 
+        tags: llm_fields.tags,
+    };
+    
     println!("{:?}", &meta_struct);
 
     println!("Structured Data Successfully Generated");
@@ -397,19 +408,248 @@ pub async fn submit_document(
 
     println!("{:?}", conversion_request);
 
-    // Submit Form and Await Response
+    // Store conversion_request in session for validation page
+    session.insert("conversion_request", &conversion_request)
+        .expect("Unable to store conversion_request in session");
+
+    // Redirect to validation page
+    HttpResponse::Found()
+        .append_header(("Location", format!("/{}/validate_conversion", &lang)))
+        .finish()
+}
+
+/// Display the validation page with generated conversion request data
+#[get("/{lang}/validate_conversion")]
+pub async fn validate_conversion(
+    path: web::Path<String>,
+    data: web::Data<AppData>,
+    req: HttpRequest,
+    id: Option<Identity>,
+) -> impl Responder {
+    let lang = path.into_inner();
+    let session = req.get_session();
+
+    let mut ctx = generate_basic_context(id, &lang, req.uri().path(), &session);
+
+    // Retrieve conversion_request from session
+    let conversion_request: InsertableConversionRequest = match session.get("conversion_request").unwrap() {
+        Some(cr) => cr,
+        None => {
+            // If no conversion request in session, redirect back to form
+            return HttpResponse::Found()
+                .append_header(("Location", format!("/{}/conversion_request", &lang)))
+                .finish();
+        }
+    };
+
+    // Prepare context for template
+    ctx.insert("user_id", &conversion_request.user_id);
+    ctx.insert("authority_id", &conversion_request.authority_id);
+    ctx.insert("data_object", &conversion_request.data_object);
+    ctx.insert("metadata", &conversion_request.metadata);
+    ctx.insert("source_classification", &conversion_request.source_nation_classification);
+    ctx.insert("source_nation_code", &conversion_request.source_nation_code);
+    ctx.insert("target_nations", &conversion_request.target_nation_codes);
+
+    // Convert Optional Vec fields to comma-separated strings for display
+    let tags = conversion_request.metadata.tags
+        .iter()
+        .filter_map(|t| t.as_ref())
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    ctx.insert("tags", &tags);
+
+    let releasable_to_countries = conversion_request.metadata.releasable_to_countries
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|t| t.as_ref())
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    ctx.insert("releasable_to_countries", &releasable_to_countries);
+
+    let releasable_to_organizations = conversion_request.metadata.releasable_to_organizations
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|t| t.as_ref())
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    ctx.insert("releasable_to_organizations", &releasable_to_organizations);
+
+    let releasable_to_categories = conversion_request.metadata.releasable_to_categories
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|t| t.as_ref())
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    ctx.insert("releasable_to_categories", &releasable_to_categories);
+
+    let handling_restrictions = conversion_request.metadata.handling_restrictions
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|t| t.as_ref())
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    ctx.insert("handling_restrictions", &handling_restrictions);
+
+    let rendered = data.tmpl.render("conversion_request/validate_conversion.html", &ctx).unwrap();
+    HttpResponse::Ok().body(rendered)
+}
+
+/// Form data from the validation page
+#[derive(Deserialize, Debug)]
+pub struct ValidationForm {
+    // Data Object
+    pub title: String,
+    pub description: String,
+
+    // Metadata
+    pub identifier: String,
+    pub domain: String,
+    pub tags: String,
+    pub authorization_reference: Option<String>,
+    pub disclosure_category: Option<String>,
+    pub handling_authority: Option<String>,
+    pub releasable_to_countries: String,
+    pub releasable_to_organizations: String,
+    pub releasable_to_categories: String,
+    pub handling_restrictions: String,
+    pub no_handling_restrictions: Option<String>,
+
+    // Hidden fields (read-only)
+    pub user_id: String,
+    pub authority_id: String,
+    pub source_nation_classification: String,
+    pub source_nation_code: String,
+    pub target_nation_codes: String,
+    pub format: String,
+    pub format_size: Option<i64>,
+    pub security_classification: String,
+    pub originator_organization_id: String,
+    pub custodian_organization_id: String,
+    pub authorization_reference_date: Option<String>,
+}
+
+/// Accept validated data and submit to API
+#[post("/{lang}/confirm_conversion")]
+pub async fn confirm_conversion(
+    path: web::Path<String>,
+    data: web::Data<AppData>,
+    req: HttpRequest,
+    form: web::Form<ValidationForm>,
+    id: Option<Identity>,
+) -> impl Responder {
+    let lang = path.into_inner();
+    let session = req.get_session();
+
+    let mut ctx = generate_basic_context(id, &lang, req.uri().path(), &session);
+
+    let bearer = match session.get::<String>("bearer").unwrap() {
+        Some(s) => s,
+        None => "".to_string(),
+    };
+
+    // Helper function to parse comma-separated string into Vec<Option<String>>
+    fn parse_csv(s: &str) -> Option<Vec<Option<String>>> {
+        if s.trim().is_empty() {
+            None
+        } else {
+            Some(
+                s.split(',')
+                    .map(|item| item.trim())
+                    .filter(|item| !item.is_empty())
+                    .map(|item| Some(item.to_string()))
+                    .collect()
+            )
+        }
+    }
+
+    // Parse domain back to enum
+    let domain = match form.domain.as_str() {
+        "INTEL" => Domain::INTEL,
+        "CYBER" => Domain::CYBER,
+        "OPERATIONS" => Domain::OPERATIONS,
+        "LOGISTICS" => Domain::LOGISTICS,
+        "COMMUNICATIONS" => Domain::COMMUNICATIONS,
+        "NUCLEAR" => Domain::NUCLEAR,
+        "COUNTERTERRORISM" => Domain::COUNTERTERRORISM,
+        "MARITIME" => Domain::MARITIME,
+        "AEROSPACE" => Domain::AEROSPACE,
+        "SPECIALOPS" => Domain::SPECIALOPS,
+        _ => Domain::OPERATIONS, // default
+    };
+
+    // Parse authorization_reference_date
+    let auth_ref_date = form.authorization_reference_date.as_ref()
+        .and_then(|s| NaiveDateTime::parse_from_str(s, "%Y-%m-%dT%H:%M:%S%.f").ok());
+
+    // Reconstruct the InsertableConversionRequest from validated form data
+    let data_struct = InsertableDataObject {
+        title: form.title.clone(),
+        description: form.description.clone(),
+    };
+
+    let meta_struct = InsertableMetadata {
+        identifier: form.identifier.clone(),
+        authorization_reference: form.authorization_reference.clone(),
+        authorization_reference_date: auth_ref_date,
+        originator_organization_id: Uuid::parse_str(&form.originator_organization_id)
+            .expect("Invalid originator_organization_id"),
+        custodian_organization_id: Uuid::parse_str(&form.custodian_organization_id)
+            .expect("Invalid custodian_organization_id"),
+        format: form.format.clone(),
+        format_size: form.format_size,
+        security_classification: form.security_classification.clone(),
+        releasable_to_countries: parse_csv(&form.releasable_to_countries),
+        releasable_to_organizations: parse_csv(&form.releasable_to_organizations),
+        releasable_to_categories: parse_csv(&form.releasable_to_categories),
+        disclosure_category: form.disclosure_category.clone(),
+        handling_restrictions: parse_csv(&form.handling_restrictions),
+        handling_authority: form.handling_authority.clone(),
+        no_handling_restrictions: form.no_handling_restrictions.as_ref().map(|_| true),
+        domain: domain,
+        tags: parse_csv(&form.tags).unwrap_or_default(),
+    };
+
+    // Parse target_nation_codes back to Vec<String>
+    let target_nations: Vec<String> = form.target_nation_codes
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+
+    let conversion_request = InsertableConversionRequest {
+        user_id: form.user_id.clone(),
+        authority_id: form.authority_id.clone(),
+        data_object: data_struct,
+        metadata: meta_struct,
+        source_nation_classification: form.source_nation_classification.clone(),
+        source_nation_code: form.source_nation_code.clone(),
+        target_nation_codes: target_nations,
+    };
+
+    println!("Submitting validated conversion request: {:?}", conversion_request);
+
+    // Submit to API
     let response = submit_conversion_request(
-        conversion_request, 
-        &data.api_url, 
+        conversion_request,
+        &data.api_url,
         Arc::clone(&data.client),
         bearer
     )
     .await
     .expect("Unable to get ConversionResponse from server");
 
+    // Clear session data
+    session.remove("conversion_request");
+
     // Generate Response for User
     ctx.insert("conversion_response", &response);
-                  
+
     let rendered = data.tmpl.render("conversion_request/conversion_response.html", &ctx).unwrap();
     HttpResponse::Ok().body(rendered)
 }

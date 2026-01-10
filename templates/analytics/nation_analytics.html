@@ -1,0 +1,837 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>NATO Classification API - Nation Analytics</title>
+{% endblock title %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1e3a8a;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #60a5fa;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header .nav-link {
+            color: #93c5fd;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .header .nav-link:hover {
+            color: #60a5fa;
+        }
+
+        .nation-selector {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+
+        .nation-selector label {
+            display: block;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .nation-selector select {
+            width: 220px;
+            padding: 10px 15px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .nation-selector select:focus {
+            outline: none;
+            border-color: #60a5fa;
+        }
+
+        .nation-selector select option {
+            background: #0f172a;
+            color: #e0e0e0;
+        }
+
+        .nation-selector button {
+            padding: 10px 24px;
+            margin-left: 12px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nation-selector button:hover {
+            transform: translateY(-1px);
+        }
+
+        .nation-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #2563eb;
+        }
+
+        .nation-header h2 {
+            margin: 0 0 10px 0;
+            color: #93c5fd;
+            font-size: 32px;
+        }
+
+        .nation-header .nation-info {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .kpi-card .label {
+            font-size: 13px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .kpi-card .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 5px;
+        }
+
+        .kpi-card .subtext {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .chart-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .chart-card h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .chart-bar {
+            margin-bottom: 15px;
+        }
+
+        .chart-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .chart-bar-label .name {
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .chart-bar-label .count {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .chart-bar-fill {
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .chart-bar-fill-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+            border-radius: 4px;
+            transition: width 0.6s ease-out;
+        }
+
+        .metadata-table {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .metadata-table h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .metadata-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .metadata-table th {
+            text-align: left;
+            padding: 12px;
+            color: #94a3b8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .metadata-table td {
+            padding: 12px;
+            color: #cbd5e1;
+            font-size: 14px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .metadata-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-classification {
+            background: #991b1b;
+            color: #fca5a5;
+        }
+
+        .badge-domain {
+            background: #1e40af;
+            color: #93c5fd;
+        }
+
+        .badge-restriction {
+            background: #713f12;
+            color: #fcd34d;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .loading .spinner {
+            border: 3px solid #334155;
+            border-top: 3px solid #60a5fa;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #7f1d1d;
+            border: 1px solid #991b1b;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #fca5a5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .pill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .pill {
+            background: #334155;
+            color: #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+    </style>
+
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Nation Analytics Dashboard</h1>
+            <div class="nav-links">
+                <a href="/" class="nav-link">← Documentation</a>
+                <a href="/dashboard" class="nav-link">Global Dashboard</a>
+                <a href="/playground" class="nav-link">Playground</a>
+            </div>
+        </div>
+
+        <div class="nation-selector">
+            <label for="nationCode">Select Nation Code:</label>
+            <select id="nationCode">
+                <option value="">-- Select a Nation --</option>
+                {% for nation in nations %}
+                <option value="{{ nation }}">{{ nation }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="loadNationData()">Load Analytics</button>
+        </div>
+
+        <div id="content">
+            <div class="empty-state">
+                <h3>👆 Select a nation code to view analytics</h3>
+                <p>Choose a nation from the dropdown above to load analytics data</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GRAPHQL_ENDPOINT = '/graphql';
+
+        async function fetchGraphQL(query, variables = {}) {
+            const response = await fetch(GRAPHQL_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query, variables })
+            });
+
+            const result = await response.json();
+            if (result.errors) {
+                throw new Error(result.errors[0].message);
+            }
+            return result.data;
+        }
+
+        async function loadNationData() {
+            const nationCode = document.getElementById('nationCode').value.trim();
+
+            if (!nationCode) {
+                alert('Please select a nation code from the dropdown');
+                return;
+            }
+
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading analytics for ' + nationCode + '...</p></div>';
+
+            try {
+                // Fetch all relevant data
+                const data = await fetchGraphQL(`
+                    query NationAnalytics($nationCode: String!) {
+                        nationByCode(nationCode:$nationCode) {
+                            id
+                            nationCode
+                            nationName
+                            conversionRequests {
+                                id
+                                sourceNationCode
+                                targetNationCodes
+                                sourceNationClassification
+                                createdAt
+                                completedAt
+                                dataObject {
+                                    id
+                                    title
+                                }
+                                metadata {
+                                    id
+                                    securityClassification
+                                    domain
+                                    format
+                                    releasableToCountries
+                                    releasableToOrganizations
+                                    handlingRestrictions
+                                    originatingOrganization {
+                                        id
+                                        name
+                                        email
+                                        nation {
+                                            nationCode
+                                            nationName
+                                        }
+                                    }
+                                    custodianOrganization {
+                                        id
+                                        name
+                                        email
+                                        nation {
+                                            nationCode
+                                            nationName
+                                        }
+                                    }
+                                }
+                            }
+                            inboundConversionRequests {
+                                id
+                                sourceNationCode
+                                targetNationCodes
+                                sourceNationClassification
+                                createdAt
+                                completedAt
+                                dataObject {
+                                    id
+                                    title
+                                }
+                                metadata {
+                                    id
+                                    securityClassification
+                                    domain
+                                    format
+                                    releasableToCountries
+                                    releasableToOrganizations
+                                    handlingRestrictions
+                                    originatingOrganization {
+                                        id
+                                        name
+                                        email
+                                        nation {
+                                            nationCode
+                                            nationName
+                                        }
+                                    }
+                                    custodianOrganization {
+                                        id
+                                        name
+                                        email
+                                        nation {
+                                            nationCode
+                                            nationName
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `, { nationCode });
+
+                renderNationAnalytics(nationCode, data);
+            } catch (error) {
+                contentDiv.innerHTML = '<div class="error"><strong>Error:</strong> ' + error.message + '</div>';
+            }
+        }
+
+        function renderNationAnalytics(nationCode, data) {
+            // Get nation info from the nested response
+            const nation = data.nationByCode;
+            if (!nation) {
+                document.getElementById('content').innerHTML =
+                    '<div class="error"><strong>Error:</strong> Nation code "' + nationCode + '" not found</div>';
+                return;
+            }
+
+            const nationName = nation.nationName;
+
+            // Get requests from the nation (outbound - already filtered server-side)
+            const requestsFromNation = nation.conversionRequests || [];
+
+            // Get requests to this nation (inbound - now fetched directly from server)
+            const requestsToNation = nation.inboundConversionRequests || [];
+
+            // Calculate metrics
+            const totalRequests = requestsFromNation.length + requestsToNation.length;
+            const completedRequests = [...requestsFromNation, ...requestsToNation]
+                .filter(r => r.completedAt).length;
+            const pendingRequests = totalRequests - completedRequests;
+
+            // Classification breakdown for requests FROM this nation
+            const classificationCounts = {};
+            requestsFromNation.forEach(r => {
+                const metadata = r.metadata;
+                if (metadata && metadata.securityClassification) {
+                    const classif = metadata.securityClassification;
+                    classificationCounts[classif] = (classificationCounts[classif] || 0) + 1;
+                }
+            });
+
+            // Domain breakdown
+            const domainCounts = {};
+            requestsFromNation.forEach(r => {
+                if (r.metadata && r.metadata.domain) {
+                    const domain = r.metadata.domain;
+                    domainCounts[domain] = (domainCounts[domain] || 0) + 1;
+                }
+            });
+
+            // Releasability analysis
+            const releasableToCounts = {};
+            requestsFromNation.forEach(r => {
+                if (r.metadata && r.metadata.releasableToCountries) {
+                    r.metadata.releasableToCountries.forEach(country => {
+                        if (country) {
+                            releasableToCounts[country] = (releasableToCounts[country] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            // Target nations for conversions FROM this nation
+            const targetNationCounts = {};
+            requestsFromNation.forEach(r => {
+                if (r.targetNationCodes) {
+                    r.targetNationCodes.forEach(target => {
+                        if (target) {
+                            targetNationCounts[target] = (targetNationCounts[target] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            // Source nations for conversions TO this nation
+            const sourceNationCounts = {};
+            requestsToNation.forEach(r => {
+                const source = r.sourceNationCode;
+                if (source) {
+                    sourceNationCounts[source] = (sourceNationCounts[source] || 0) + 1;
+                }
+            });
+
+            // Handling restrictions breakdown
+            const restrictionCounts = {};
+            requestsFromNation.forEach(r => {
+                if (r.metadata && r.metadata.handlingRestrictions) {
+                    r.metadata.handlingRestrictions.forEach(restriction => {
+                        if (restriction) {
+                            restrictionCounts[restriction] = (restrictionCounts[restriction] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            // Organization involvement - using complex objects
+            const originatorOrgsMap = new Map();
+            const custodianOrgsMap = new Map();
+            const originatorOrgsByName = {};
+            const custodianOrgsByName = {};
+
+            requestsFromNation.forEach(r => {
+                if (r.metadata) {
+                    if (r.metadata.originatingOrganization) {
+                        const org = r.metadata.originatingOrganization;
+                        originatorOrgsMap.set(org.id, org);
+                        originatorOrgsByName[org.name] = (originatorOrgsByName[org.name] || 0) + 1;
+                    }
+                    if (r.metadata.custodianOrganization) {
+                        const org = r.metadata.custodianOrganization;
+                        custodianOrgsMap.set(org.id, org);
+                        custodianOrgsByName[org.name] = (custodianOrgsByName[org.name] || 0) + 1;
+                    }
+                }
+            });
+
+            // Organization nations breakdown
+            const originatorNationCounts = {};
+            originatorOrgsMap.forEach(org => {
+                if (org.nation) {
+                    const nationCode = org.nation.nationCode;
+                    originatorNationCounts[nationCode] = (originatorNationCounts[nationCode] || 0) + 1;
+                }
+            });
+
+            // Render the dashboard
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = `
+                <div class="nation-header">
+                    <h2>${nationName} (${nationCode})</h2>
+                    <div class="nation-info">Comprehensive API usage analytics and metadata insights</div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="label">Total Requests</div>
+                        <div class="value">${totalRequests}</div>
+                        <div class="subtext">${requestsFromNation.length} outbound, ${requestsToNation.length} inbound</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="label">Requests FROM ${nationCode}</div>
+                        <div class="value">${requestsFromNation.length}</div>
+                        <div class="subtext">Documents originating from ${nationCode}</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="label">Requests TO ${nationCode}</div>
+                        <div class="value">${requestsToNation.length}</div>
+                        <div class="subtext">Documents shared with ${nationCode}</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="label">Completed Requests</div>
+                        <div class="value">${completedRequests}</div>
+                        <div class="subtext">${pendingRequests} pending</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="label">Unique Originators</div>
+                        <div class="value">${originatorOrgsMap.size}</div>
+                        <div class="subtext">Organizations creating content</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="label">Unique Custodians</div>
+                        <div class="value">${custodianOrgsMap.size}</div>
+                        <div class="subtext">Organizations managing content</div>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    ${renderBarChart('Security Classifications (FROM ' + nationCode + ')', classificationCounts)}
+                    ${renderBarChart('Mission Domains (FROM ' + nationCode + ')', domainCounts)}
+                    ${renderBarChart('Target Nations (FROM ' + nationCode + ')', targetNationCounts)}
+                    ${renderBarChart('Source Nations (TO ' + nationCode + ')', sourceNationCounts)}
+                    ${renderBarChart('Releasable To Countries', releasableToCounts)}
+                    ${renderBarChart('Handling Restrictions', restrictionCounts)}
+                    ${renderBarChart('Top Originating Organizations', originatorOrgsByName)}
+                    ${renderBarChart('Top Custodian Organizations', custodianOrgsByName)}
+                </div>
+
+                <div class="metadata-table">
+                    <h3>Recent Conversion Requests FROM ${nationCode}</h3>
+                    ${renderRecentRequests(requestsFromNation.slice(0, 10))}
+                </div>
+
+                <div class="metadata-table">
+                    <h3>Recent Conversion Requests TO ${nationCode}</h3>
+                    ${renderRecentRequests(requestsToNation.slice(0, 10))}
+                </div>
+
+                <div class="metadata-table">
+                    <h3>Originating Organizations (FROM ${nationCode})</h3>
+                    ${renderOrganizationTable(Array.from(originatorOrgsMap.values()))}
+                </div>
+
+                <div class="metadata-table">
+                    <h3>Custodian Organizations (FROM ${nationCode})</h3>
+                    ${renderOrganizationTable(Array.from(custodianOrgsMap.values()))}
+                </div>
+            `;
+        }
+
+        function renderBarChart(title, data) {
+            if (Object.keys(data).length === 0) {
+                return `
+                    <div class="chart-card">
+                        <h3>${title}</h3>
+                        <div class="empty-state" style="padding: 20px;">No data available</div>
+                    </div>
+                `;
+            }
+
+            const maxValue = Math.max(...Object.values(data));
+            const sortedEntries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+
+            const bars = sortedEntries.map(([name, count]) => {
+                const percentage = (count / maxValue) * 100;
+                return `
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span class="name">${name}</span>
+                            <span class="count">${count}</span>
+                        </div>
+                        <div class="chart-bar-fill">
+                            <div class="chart-bar-fill-inner" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="chart-card">
+                    <h3>${title}</h3>
+                    ${bars}
+                </div>
+            `;
+        }
+
+        function renderRecentRequests(requests) {
+            if (requests.length === 0) {
+                return '<div class="empty-state" style="padding: 20px;">No requests found</div>';
+            }
+
+            const rows = requests.map(r => {
+                const metadata = r.metadata || {};
+                const targets = r.targetNationCodes ? r.targetNationCodes.filter(t => t).join(', ') : 'N/A';
+                const restrictions = metadata.handlingRestrictions
+                    ? metadata.handlingRestrictions.filter(h => h).map(h =>
+                        `<span class="badge badge-restriction">${h}</span>`
+                      ).join(' ')
+                    : '<span style="color: #64748b;">None</span>';
+
+                // Display organization names from complex objects
+                const originatorName = metadata.originatingOrganization
+                    ? metadata.originatingOrganization.name
+                    : 'N/A';
+                const custodianName = metadata.custodianOrganization
+                    ? metadata.custodianOrganization.name
+                    : 'N/A';
+
+                return `
+                    <tr>
+                        <td>${r.dataObject ? r.dataObject.title : 'N/A'}</td>
+                        <td><span class="badge badge-classification">${metadata.securityClassification || 'N/A'}</span></td>
+                        <td><span class="badge badge-domain">${metadata.domain || 'N/A'}</span></td>
+                        <td>${metadata.format || 'N/A'}</td>
+                        <td>${originatorName}</td>
+                        <td>${targets}</td>
+                        <td>${restrictions}</td>
+                        <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Document</th>
+                            <th>Classification</th>
+                            <th>Domain</th>
+                            <th>Format</th>
+                            <th>Originator</th>
+                            <th>Target Nations</th>
+                            <th>Restrictions</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderOrganizationTable(organizations) {
+            if (organizations.length === 0) {
+                return '<div class="empty-state" style="padding: 20px;">No organizations found</div>';
+            }
+
+            const rows = organizations.map(org => {
+                const nationInfo = org.nation
+                    ? `${org.nation.nationName} (${org.nation.nationCode})`
+                    : 'N/A';
+
+                return `
+                    <tr>
+                        <td><strong>${org.name}</strong></td>
+                        <td>${org.email}</td>
+                        <td>${nationInfo}</td>
+                        <td style="font-size: 11px; color: #64748b;">${org.id.substring(0, 8)}...</td>
+                    </tr>
+                `;
+            }).join('');
+
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Organization Name</th>
+                            <th>Email</th>
+                            <th>Nation</th>
+                            <th>ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Load nation from URL parameter if present
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nationCode = urlParams.get('nation');
+            if (nationCode) {
+                document.getElementById('nationCode').value = nationCode.toUpperCase();
+                loadNationData();
+            }
+        });
+
+        // Auto-load when selection changes
+        document.getElementById('nationCode').addEventListener('change', (e) => {
+            if (e.target.value) {
+                loadNationData();
+            }
+        });
+    </script>
+{% endblock content %}

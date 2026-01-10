@@ -30,6 +30,8 @@ use crate::handlers::{
     // conversion_request
     conversion_request_form,
     submit_document,
+    validate_conversion,
+    confirm_conversion,
 
 };
 
@@ -51,6 +53,8 @@ pub fn configure_services(config: &mut web::ServiceConfig) {
     // conversion request
     config.service(conversion_request_form);
     config.service(submit_document);
+    config.service(validate_conversion);
+    config.service(confirm_conversion);
     
     //config.service(about);
     config.service(toggle_language);

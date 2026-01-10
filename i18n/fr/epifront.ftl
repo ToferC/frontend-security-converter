@@ -20,6 +20,9 @@ publication = Publication
 role = Role
 task = Task
 
+## Conversion Request
+conversion-request = Conversion Request
+
 ## Base & Navbar
 button-explore-demo-data = Explore demonstration data
 about = About the Project

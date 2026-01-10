@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <div class="col m-md-2 m-1">
+            <div class="container mt-4">
+                <h1 class="mb-4">
+                    <i class="bi bi-clipboard-check"></i> Validate Conversion Request
+                </h1>
+
+                <div class="alert alert-info" role="alert">
+                    <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Review Generated Data</h5>
+                    <p class="mb-0">Please review the automatically generated metadata and data object fields below. You can edit any values before submitting the conversion request.</p>
+                </div>
+
+                <form method="post" action="/{{ lang }}/confirm_conversion" id="validationForm">
+
+                    <!-- Data Object Card -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Data Object</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="title" class="form-label"><strong>Title</strong></label>
+                                <input type="text" class="form-control" id="title" name="title" value="{{ data_object.title }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label"><strong>Description</strong></label>
+                                <textarea class="form-control" id="description" name="description" rows="3" required>{{ data_object.description }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metadata Card -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-tag"></i> Metadata</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="identifier" class="form-label"><strong>Identifier</strong></label>
+                                    <input type="text" class="form-control" id="identifier" name="identifier" value="{{ metadata.identifier }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="domain" class="form-label"><strong>Domain</strong></label>
+                                    <select class="form-select" id="domain" name="domain" required>
+                                        <option value="INTEL" {% if metadata.domain == "INTEL" %}selected{% endif %}>Intelligence</option>
+                                        <option value="CYBER" {% if metadata.domain == "CYBER" %}selected{% endif %}>Cyber</option>
+                                        <option value="OPERATIONS" {% if metadata.domain == "OPERATIONS" %}selected{% endif %}>Operations</option>
+                                        <option value="LOGISTICS" {% if metadata.domain == "LOGISTICS" %}selected{% endif %}>Logistics</option>
+                                        <option value="COMMUNICATIONS" {% if metadata.domain == "COMMUNICATIONS" %}selected{% endif %}>Communications</option>
+                                        <option value="NUCLEAR" {% if metadata.domain == "NUCLEAR" %}selected{% endif %}>Nuclear</option>
+                                        <option value="COUNTERTERRORISM" {% if metadata.domain == "COUNTERTERRORISM" %}selected{% endif %}>Counterterrorism</option>
+                                        <option value="MARITIME" {% if metadata.domain == "MARITIME" %}selected{% endif %}>Maritime</option>
+                                        <option value="AEROSPACE" {% if metadata.domain == "AEROSPACE" %}selected{% endif %}>Aerospace</option>
+                                        <option value="SPECIALOPS" {% if metadata.domain == "SPECIALOPS" %}selected{% endif %}>Special Ops</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tags" class="form-label"><strong>Tags</strong></label>
+                                <input type="text" class="form-control" id="tags" name="tags" value="{{ tags }}" placeholder="Comma-separated tags">
+                                <small class="form-text text-muted">Separate tags with commas</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="authorization_reference" class="form-label"><strong>Authorization Reference</strong></label>
+                                <input type="text" class="form-control" id="authorization_reference" name="authorization_reference" value="{{ metadata.authorization_reference }}">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label"><strong>Security Classification</strong></label>
+                                    <input type="text" class="form-control" value="{{ metadata.security_classification }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label"><strong>Format</strong></label>
+                                    <input type="text" class="form-control" value="{{ metadata.format }}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="disclosure_category" class="form-label"><strong>Disclosure Category</strong></label>
+                                <input type="text" class="form-control" id="disclosure_category" name="disclosure_category" value="{{ metadata.disclosure_category }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="handling_authority" class="form-label"><strong>Handling Authority</strong></label>
+                                <input type="text" class="form-control" id="handling_authority" name="handling_authority" value="{{ metadata.handling_authority }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="releasable_to_countries" class="form-label"><strong>Releasable to Countries</strong></label>
+                                <input type="text" class="form-control" id="releasable_to_countries" name="releasable_to_countries" value="{{ releasable_to_countries }}" placeholder="Comma-separated country codes">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="releasable_to_organizations" class="form-label"><strong>Releasable to Organizations</strong></label>
+                                <input type="text" class="form-control" id="releasable_to_organizations" name="releasable_to_organizations" value="{{ releasable_to_organizations }}" placeholder="Comma-separated organization codes">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="releasable_to_categories" class="form-label"><strong>Releasable to Categories</strong></label>
+                                <input type="text" class="form-control" id="releasable_to_categories" name="releasable_to_categories" value="{{ releasable_to_categories }}" placeholder="Comma-separated categories">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="handling_restrictions" class="form-label"><strong>Handling Restrictions</strong></label>
+                                <input type="text" class="form-control" id="handling_restrictions" name="handling_restrictions" value="{{ handling_restrictions }}" placeholder="Comma-separated restrictions">
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="no_handling_restrictions" name="no_handling_restrictions" {% if metadata.no_handling_restrictions %}checked{% endif %}>
+                                <label class="form-check-label" for="no_handling_restrictions">
+                                    No Handling Restrictions
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Request Information Card (Read-only) -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="bi bi-info-circle"></i> Request Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Source Nation Code:</strong></p>
+                                    <p><span class="badge bg-info text-dark">{{ source_nation_code }}</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Source Classification:</strong></p>
+                                    <p><span class="badge bg-warning text-dark">{{ source_classification }}</span></p>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <p><strong>Target Nations:</strong></p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for nation in target_nations %}
+                                        <span class="badge bg-secondary">{{ nation }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields to preserve non-editable data -->
+                    <input type="hidden" name="user_id" value="{{ user_id }}">
+                    <input type="hidden" name="authority_id" value="{{ authority_id }}">
+                    <input type="hidden" name="source_nation_classification" value="{{ source_classification }}">
+                    <input type="hidden" name="source_nation_code" value="{{ source_nation_code }}">
+                    <input type="hidden" name="target_nation_codes" value="{{ target_nations | join(sep=',') }}">
+                    <input type="hidden" name="format" value="{{ metadata.format }}">
+                    <input type="hidden" name="format_size" value="{{ metadata.format_size }}">
+                    <input type="hidden" name="security_classification" value="{{ metadata.security_classification }}">
+                    <input type="hidden" name="originator_organization_id" value="{{ metadata.originator_organization_id }}">
+                    <input type="hidden" name="custodian_organization_id" value="{{ metadata.custodian_organization_id }}">
+                    <input type="hidden" name="authorization_reference_date" value="{{ metadata.authorization_reference_date }}">
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 justify-content-between mt-4 mb-5">
+                        <a href="/{{ lang }}/conversion_request" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Confirm & Submit
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <style>
+            .card {
+                border-radius: 8px;
+            }
+            .form-label {
+                font-weight: 500;
+            }
+            .badge {
+                font-size: 0.9rem;
+                padding: 0.5rem 0.75rem;
+            }
+        </style>
+{% endblock content %}

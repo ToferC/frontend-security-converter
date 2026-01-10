@@ -11,10 +11,6 @@
                 
                 {% if response %}
 
-                {% for k, v in response %}
-                    <li>{{ k }}: {{ v }}</li>
-                {% endfor %}
-
                     <!-- Status Alert -->
                     {% if response.success %}
                     <div class="alert alert-success" role="alert">

@@ -4,8 +4,11 @@
         <div class="col m-md-2 m-1">
             <h1>{{ fluent(key="welcome-to", lang=lang) }}</h1>
 
-            <a class="button" href="/{{ lang }}/conversion_request">Submit Conversion Request</a>
-
+            {% if session_user != "" %}
+                <a href="/{{ lang }}/conversion_request" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Create Conversion Request
+                </a>            
+            {% endif %}
 
             <h2>Authority</h2>
             {% for authority in authorities %}
