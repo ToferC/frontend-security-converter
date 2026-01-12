@@ -43,7 +43,13 @@
 
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-success text-white">
-                        <h3 class="mb-0 h5">Target Nations</h3>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0 h5">Target Nations</h3>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-light" onclick="selectAllNations()">Select All</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="deselectAllNations()">Deselect All</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <p class="text-muted mb-3">Select the nations to which this document may be released</p>
@@ -331,6 +337,21 @@
                 </div>
 
                 <script>
+                    // Select/Deselect all nations
+                    function selectAllNations() {
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"][name*="alb"], input[type="checkbox"][name*="aus"], input[type="checkbox"][name*="bel"], input[type="checkbox"][name*="bgr"], input[type="checkbox"][name*="can"], input[type="checkbox"][name*="hrv"], input[type="checkbox"][name*="cze"], input[type="checkbox"][name*="dnk"], input[type="checkbox"][name*="est"], input[type="checkbox"][name*="fin"], input[type="checkbox"][name*="fra"], input[type="checkbox"][name*="deu"], input[type="checkbox"][name*="grc"], input[type="checkbox"][name*="hun"], input[type="checkbox"][name*="isl"], input[type="checkbox"][name*="ita"], input[type="checkbox"][name*="lva"], input[type="checkbox"][name*="ltu"], input[type="checkbox"][name*="lux"], input[type="checkbox"][name*="mne"], input[type="checkbox"][name*="nld"], input[type="checkbox"][name*="nzl"], input[type="checkbox"][name*="mkd"], input[type="checkbox"][name*="nor"], input[type="checkbox"][name*="pol"], input[type="checkbox"][name*="prt"], input[type="checkbox"][name*="rou"], input[type="checkbox"][name*="svk"], input[type="checkbox"][name*="svn"], input[type="checkbox"][name*="esp"], input[type="checkbox"][name*="swe"], input[type="checkbox"][name*="tur"], input[type="checkbox"][name*="gbr"], input[type="checkbox"][name*="usa"]');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = true;
+                        });
+                    }
+
+                    function deselectAllNations() {
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"][name*="alb"], input[type="checkbox"][name*="aus"], input[type="checkbox"][name*="bel"], input[type="checkbox"][name*="bgr"], input[type="checkbox"][name*="can"], input[type="checkbox"][name*="hrv"], input[type="checkbox"][name*="cze"], input[type="checkbox"][name*="dnk"], input[type="checkbox"][name*="est"], input[type="checkbox"][name*="fin"], input[type="checkbox"][name*="fra"], input[type="checkbox"][name*="deu"], input[type="checkbox"][name*="grc"], input[type="checkbox"][name*="hun"], input[type="checkbox"][name*="isl"], input[type="checkbox"][name*="ita"], input[type="checkbox"][name*="lva"], input[type="checkbox"][name*="ltu"], input[type="checkbox"][name*="lux"], input[type="checkbox"][name*="mne"], input[type="checkbox"][name*="nld"], input[type="checkbox"][name*="nzl"], input[type="checkbox"][name*="mkd"], input[type="checkbox"][name*="nor"], input[type="checkbox"][name*="pol"], input[type="checkbox"][name*="prt"], input[type="checkbox"][name*="rou"], input[type="checkbox"][name*="svk"], input[type="checkbox"][name*="svn"], input[type="checkbox"][name*="esp"], input[type="checkbox"][name*="swe"], input[type="checkbox"][name*="tur"], input[type="checkbox"][name*="gbr"], input[type="checkbox"][name*="usa"]');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                    }
+
                     function loadMarkdownFile(event) {
                         const file = event.target.files[0];
                         if (file) {

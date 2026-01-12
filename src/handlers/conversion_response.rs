@@ -328,6 +328,7 @@ pub async fn submit_document(
 
     let data_obj_format = FormatType::StructuredJson(Box::new(JsonStructure::new::<LLMFields>()));
 
+    // Options: ministral-3:14b, mistral-small, gemma3:1b
     let model = "ministral-3:14b".to_owned();
     let prompt = format!("Take the data from document to populate metadata and data object fields: {}", &form.content);
 

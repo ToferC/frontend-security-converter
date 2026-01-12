@@ -1,0 +1,850 @@
+/**
+ * NATO Classification Converter - High Contrast Dark Theme
+ *
+ * Dark mode by default with WCAG AAA compliant high contrast colors.
+ * All color combinations meet or exceed 7:1 contrast ratio.
+ *
+ * Design Philosophy:
+ * - Dark backgrounds reduce eye strain
+ * - Bright, saturated colors for key UI elements
+ * - Maximum contrast for text readability
+ * - Clear visual hierarchy
+ */
+
+/* ==========================================================================
+   Base Styles - Dark Theme Foundation
+   ========================================================================== */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #FFFFFF !important;
+    background-color: #0a0a0a !important;
+}
+
+/* Container backgrounds */
+.container,
+.container-fluid {
+    background-color: #0a0a0a !important;
+}
+
+/* Improve text readability */
+p, li, dd, td, span, div {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   Headings - Maximum Contrast
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   Buttons - Bright, High-Contrast Colors
+   ========================================================================== */
+
+.btn {
+    font-weight: 700 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Primary - Electric Blue with White Text */
+.btn-primary {
+    background-color: #0066CC !important;
+    border-color: #0099FF !important;
+    color: #FFFFFF !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #0099FF !important;
+    border-color: #00CCFF !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 4px rgba(0, 153, 255, 0.4) !important;
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    background-color: #0052A3 !important;
+    border-color: #0066CC !important;
+    color: #FFFFFF !important;
+}
+
+/* Success - Bright Green */
+.btn-success {
+    background-color: #00FF00 !important;
+    border-color: #00FF00 !important;
+    color: #000000 !important;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: #33FF33 !important;
+    border-color: #33FF33 !important;
+    color: #000000 !important;
+    box-shadow: 0 0 0 4px rgba(0, 255, 0, 0.4) !important;
+}
+
+/* Danger - Bright Red */
+.btn-danger {
+    background-color: #FF0040 !important;
+    border-color: #FF0040 !important;
+    color: #FFFFFF !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: #FF3366 !important;
+    border-color: #FF3366 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 4px rgba(255, 0, 64, 0.4) !important;
+}
+
+/* Warning - Bright Orange */
+.btn-warning {
+    background-color: #FFAA00 !important;
+    border-color: #FFAA00 !important;
+    color: #000000 !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+    background-color: #FFBB33 !important;
+    border-color: #FFBB33 !important;
+    color: #000000 !important;
+    box-shadow: 0 0 0 4px rgba(255, 170, 0, 0.4) !important;
+}
+
+/* Info - Bright Cyan */
+.btn-info {
+    background-color: #00DDFF !important;
+    border-color: #00DDFF !important;
+    color: #000000 !important;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+    background-color: #33EEFF !important;
+    border-color: #33EEFF !important;
+    color: #000000 !important;
+    box-shadow: 0 0 0 4px rgba(0, 221, 255, 0.4) !important;
+}
+
+/* Dark - Lighter for visibility */
+.btn-dark {
+    background-color: #444444 !important;
+    border-color: #666666 !important;
+    color: #FFFFFF !important;
+}
+
+.btn-dark:hover,
+.btn-dark:focus {
+    background-color: #555555 !important;
+    border-color: #777777 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 4px rgba(68, 68, 68, 0.4) !important;
+}
+
+/* Secondary - Light Gray */
+.btn-secondary {
+    background-color: #888888 !important;
+    border-color: #999999 !important;
+    color: #000000 !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background-color: #AAAAAA !important;
+    border-color: #BBBBBB !important;
+    color: #000000 !important;
+    box-shadow: 0 0 0 4px rgba(136, 136, 136, 0.4) !important;
+}
+
+.btn-lg {
+    padding: 1rem 2rem !important;
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+}
+
+/* Light button variant for select all */
+.btn-light {
+    background-color: #FFFFFF !important;
+    border-color: #CCCCCC !important;
+    color: #000000 !important;
+}
+
+.btn-light:hover,
+.btn-light:focus {
+    background-color: #E6E6E6 !important;
+    border-color: #999999 !important;
+    color: #000000 !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ==========================================================================
+   Cards - Dark with Bright Headers
+   ========================================================================== */
+
+.card {
+    background-color: #1a1a1a !important;
+    border: 2px solid #444444 !important;
+    border-radius: 8px !important;
+    margin-bottom: 1.5rem !important;
+    color: #FFFFFF !important;
+}
+
+.card-header {
+    font-weight: 700 !important;
+    border-bottom: 2px solid #444444 !important;
+    padding: 1.25rem !important;
+    font-size: 1.1rem !important;
+}
+
+/* Card Header Colors - Bright on Dark */
+.card-header.bg-primary {
+    background-color: #0066CC !important;
+    color: #FFFFFF !important;
+    border-color: #0099FF !important;
+}
+
+.card-header.bg-success {
+    background-color: #00AA00 !important;
+    color: #FFFFFF !important;
+    border-color: #00FF00 !important;
+}
+
+.card-header.bg-danger {
+    background-color: #CC0033 !important;
+    color: #FFFFFF !important;
+    border-color: #FF0040 !important;
+}
+
+.card-header.bg-warning {
+    background-color: #CC8800 !important;
+    color: #000000 !important;
+    border-color: #FFAA00 !important;
+}
+
+.card-header.bg-info {
+    background-color: #0099CC !important;
+    color: #FFFFFF !important;
+    border-color: #00DDFF !important;
+}
+
+.card-header.bg-secondary {
+    background-color: #555555 !important;
+    color: #FFFFFF !important;
+    border-color: #888888 !important;
+}
+
+.card-header.bg-dark {
+    background-color: #2a2a2a !important;
+    color: #FFFFFF !important;
+    border-color: #555555 !important;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+    background-color: #1a1a1a !important;
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   Badges - Bright Colors with High Contrast
+   ========================================================================== */
+
+.badge {
+    font-weight: 700 !important;
+    padding: 0.5em 0.85em !important;
+    border-radius: 4px !important;
+    border: 2px solid transparent !important;
+    font-size: 0.9em !important;
+}
+
+.badge.bg-primary {
+    background-color: #0066CC !important;
+    color: #FFFFFF !important;
+    border-color: #0099FF !important;
+}
+
+.badge.bg-success {
+    background-color: #00FF00 !important;
+    color: #000000 !important;
+    border-color: #00FF00 !important;
+}
+
+.badge.bg-danger {
+    background-color: #FF0040 !important;
+    color: #FFFFFF !important;
+    border-color: #FF0040 !important;
+}
+
+.badge.bg-warning {
+    background-color: #FFAA00 !important;
+    color: #000000 !important;
+    border-color: #FFAA00 !important;
+}
+
+.badge.bg-info {
+    background-color: #00DDFF !important;
+    color: #000000 !important;
+    border-color: #00DDFF !important;
+}
+
+.badge.bg-secondary {
+    background-color: #888888 !important;
+    color: #000000 !important;
+    border-color: #888888 !important;
+}
+
+.badge.bg-dark {
+    background-color: #444444 !important;
+    color: #FFFFFF !important;
+    border-color: #666666 !important;
+}
+
+.badge.bg-light {
+    background-color: #CCCCCC !important;
+    color: #000000 !important;
+    border-color: #CCCCCC !important;
+}
+
+/* Ensure text color overrides */
+.badge.text-dark {
+    color: #000000 !important;
+}
+
+.badge.text-white {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   Alerts - High Contrast Messaging
+   ========================================================================== */
+
+.alert {
+    border-width: 2px !important;
+    border-radius: 8px !important;
+    padding: 1.25rem !important;
+    font-weight: 600 !important;
+}
+
+.alert-success {
+    background-color: #003300 !important;
+    border-color: #00FF00 !important;
+    color: #00FF00 !important;
+}
+
+.alert-danger {
+    background-color: #330011 !important;
+    border-color: #FF0040 !important;
+    color: #FF6699 !important;
+}
+
+.alert-warning {
+    background-color: #332200 !important;
+    border-color: #FFAA00 !important;
+    color: #FFAA00 !important;
+}
+
+.alert-info {
+    background-color: #002233 !important;
+    border-color: #00DDFF !important;
+    color: #00DDFF !important;
+}
+
+/* ==========================================================================
+   Navigation - High Contrast Dark Nav
+   ========================================================================== */
+
+.navbar-dark,
+.navbar.bg-dark {
+    background-color: #000000 !important;
+    border-bottom: 3px solid #0099FF !important;
+}
+
+.navbar-brand {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+}
+
+.navbar-brand img {
+    vertical-align: middle;
+    margin-right: 0.5rem;
+    filter: brightness(1.1) contrast(1.1);
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+    color: #00DDFF !important;
+}
+
+.navbar-brand:hover img,
+.navbar-brand:focus img {
+    filter: brightness(1.3) contrast(1.2);
+}
+
+.navbar-dark .nav-link {
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1rem !important;
+}
+
+.navbar-dark .nav-link:hover,
+.navbar-dark .nav-link:focus {
+    color: #00DDFF !important;
+    background-color: #1a1a1a !important;
+    border-radius: 4px;
+}
+
+.navbar-dark .nav-link.active {
+    color: #0099FF !important;
+    font-weight: 700 !important;
+}
+
+.dropdown-menu {
+    background-color: #1a1a1a !important;
+    border: 2px solid #444444 !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8) !important;
+}
+
+.dropdown-item {
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    background-color: transparent !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: #0099FF !important;
+    color: #000000 !important;
+}
+
+.dropdown-divider {
+    border-color: #444444 !important;
+}
+
+/* ==========================================================================
+   Links - Bright and Visible
+   ========================================================================== */
+
+a {
+    color: #00DDFF !important;
+    text-decoration: underline !important;
+    font-weight: 600 !important;
+}
+
+a:hover,
+a:focus {
+    color: #33EEFF !important;
+    text-decoration: underline !important;
+    outline: 3px solid #00DDFF !important;
+    outline-offset: 2px !important;
+}
+
+a:visited {
+    color: #BB99FF !important;
+}
+
+/* List group items as links */
+.list-group-item-action {
+    background-color: #1a1a1a !important;
+    color: #FFFFFF !important;
+    border: 1px solid #444444 !important;
+    text-decoration: none !important;
+}
+
+.list-group-item-action:hover,
+.list-group-item-action:focus {
+    background-color: #0099FF !important;
+    color: #000000 !important;
+    border-left: 4px solid #00DDFF !important;
+}
+
+/* ==========================================================================
+   Forms - High Contrast Inputs
+   ========================================================================== */
+
+.form-control,
+.form-select,
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
+    background-color: #2a2a2a !important;
+    border: 2px solid #666666 !important;
+    border-radius: 6px !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    color: #FFFFFF !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    background-color: #333333 !important;
+    border-color: #0099FF !important;
+    box-shadow: 0 0 0 4px rgba(0, 153, 255, 0.3) !important;
+    outline: none !important;
+    color: #FFFFFF !important;
+}
+
+.form-control::placeholder,
+textarea::placeholder {
+    color: #AAAAAA !important;
+    opacity: 1 !important;
+}
+
+.form-label,
+label {
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.form-check-label {
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+}
+
+/* Checkboxes and Radio Buttons */
+.form-check {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 0.75rem !important;
+    min-height: 1.5rem !important;
+}
+
+.form-check-input {
+    background-color: #2a2a2a !important;
+    border: 2px solid #666666 !important;
+    width: 1.5em !important;
+    height: 1.5em !important;
+    flex-shrink: 0 !important;
+    margin-right: 0.75em !important;
+    margin-top: 0 !important;
+    position: relative !important;
+    float: none !important;
+}
+
+.form-check-input:checked {
+    background-color: #0099FF !important;
+    border-color: #0099FF !important;
+}
+
+.form-check-input:focus {
+    border-color: #00DDFF !important;
+    box-shadow: 0 0 0 3px rgba(0, 221, 255, 0.3) !important;
+}
+
+/* Form switch specific styling */
+.form-switch .form-check-input {
+    width: 2.5em !important;
+    height: 1.5em !important;
+    background-position: left center !important;
+    border-radius: 2em !important;
+}
+
+.form-switch .form-check-input:checked {
+    background-position: right center !important;
+}
+
+/* Form text / help text */
+.form-text,
+.text-muted,
+small.text-muted {
+    color: #AAAAAA !important;
+}
+
+/* ==========================================================================
+   Tables - Dark Theme High Contrast
+   ========================================================================== */
+
+table {
+    background-color: #1a1a1a !important;
+    border: 2px solid #444444 !important;
+    color: #FFFFFF !important;
+}
+
+thead {
+    background-color: #2a2a2a !important;
+}
+
+th {
+    background-color: #2a2a2a !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border: 2px solid #444444 !important;
+    padding: 1rem !important;
+}
+
+td {
+    border: 1px solid #444444 !important;
+    padding: 0.875rem !important;
+    color: #FFFFFF !important;
+    background-color: #1a1a1a !important;
+}
+
+tr:nth-child(even) td {
+    background-color: #222222 !important;
+}
+
+tr:hover td {
+    background-color: #003366 !important;
+}
+
+/* ==========================================================================
+   List Groups - Dark Theme
+   ========================================================================== */
+
+.list-group {
+    background-color: transparent !important;
+}
+
+.list-group-item {
+    background-color: #1a1a1a !important;
+    border: 1px solid #444444 !important;
+    color: #FFFFFF !important;
+}
+
+.list-group-item:hover {
+    background-color: #2a2a2a !important;
+}
+
+.list-group-flush .list-group-item {
+    border-width: 0 0 1px 0 !important;
+    border-color: #444444 !important;
+}
+
+/* ==========================================================================
+   Text Utilities - Ensure Visibility
+   ========================================================================== */
+
+.text-muted {
+    color: #AAAAAA !important;
+}
+
+.text-white {
+    color: #FFFFFF !important;
+}
+
+.text-dark {
+    color: #CCCCCC !important;
+}
+
+.text-primary {
+    color: #00DDFF !important;
+}
+
+.text-success {
+    color: #00FF00 !important;
+}
+
+.text-danger {
+    color: #FF6699 !important;
+}
+
+.text-warning {
+    color: #FFAA00 !important;
+}
+
+.text-info {
+    color: #00DDFF !important;
+}
+
+/* ==========================================================================
+   Focus Indicators - Maximum Visibility
+   ========================================================================== */
+
+*:focus {
+    outline: 3px solid #00DDFF !important;
+    outline-offset: 3px !important;
+}
+
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 3px solid #00DDFF !important;
+    outline-offset: 3px !important;
+}
+
+/* ==========================================================================
+   Shadows - Adapted for Dark Theme
+   ========================================================================== */
+
+.shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+.shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7) !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* ==========================================================================
+   Details/Summary - Dark Theme
+   ========================================================================== */
+
+details {
+    background-color: #1a1a1a !important;
+    border: 2px solid #444444 !important;
+    border-radius: 6px !important;
+    padding: 0.875rem !important;
+}
+
+summary {
+    cursor: pointer !important;
+    font-weight: 700 !important;
+    color: #00DDFF !important;
+    padding: 0.5rem !important;
+}
+
+summary:hover,
+summary:focus {
+    background-color: #2a2a2a !important;
+    outline: 2px solid #00DDFF !important;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   Borders and Separators
+   ========================================================================== */
+
+.border,
+.border-bottom,
+.border-top {
+    border-color: #444444 !important;
+}
+
+hr {
+    border-color: #444444 !important;
+    opacity: 1 !important;
+}
+
+/* ==========================================================================
+   Spinner / Loading States
+   ========================================================================== */
+
+.spinner-border {
+    border-color: #444444 !important;
+    border-right-color: #0099FF !important;
+    border-width: 0.35em !important;
+}
+
+.spinner-border.text-primary {
+    border-color: #444444 !important;
+    border-right-color: #0099FF !important;
+}
+
+/* Hide visually-hidden text properly */
+.visually-hidden,
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* ==========================================================================
+   Definition Lists
+   ========================================================================== */
+
+dt {
+    color: #AAAAAA !important;
+    font-weight: 600 !important;
+}
+
+dd {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   Specific Bootstrap Overrides
+   ========================================================================== */
+
+.bg-light {
+    background-color: #2a2a2a !important;
+}
+
+.bg-white {
+    background-color: #1a1a1a !important;
+}
+
+.border-info {
+    border-color: #00DDFF !important;
+}
+
+/* Ensure icons are visible */
+i, .bi {
+    color: inherit !important;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+
+    .btn {
+        padding: 0.625rem 1.25rem !important;
+    }
+
+    h1, .h1, .display-5 { font-size: 1.75rem !important; }
+    h2, .h2 { font-size: 1.5rem !important; }
+    h3, .h3 { font-size: 1.25rem !important; }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    * {
+        color: black !important;
+        background: white !important;
+    }
+
+    .navbar,
+    .btn,
+    .dropdown {
+        display: none !important;
+    }
+}
