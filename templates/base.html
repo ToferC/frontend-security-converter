@@ -334,6 +334,47 @@
     {% block scripts %}
     {% endblock scripts %}
 
+    <!-- Session Expiration Tracking -->
+    {% if expires_at != "" %}
+    <script>
+    (function() {
+        const expiresAtStr = '{{ expires_at }}';
+        if (!expiresAtStr) return;
+
+        // Parse the NaiveDateTime string (format: YYYY-MM-DD HH:MM:SS)
+        const expiresAt = new Date(expiresAtStr.replace(' ', 'T') + 'Z');
+        const now = new Date();
+        const timeLeft = expiresAt.getTime() - now.getTime();
+
+        if (timeLeft <= 0) {
+            // Already expired, redirect to logout
+            window.location.href = '/{{ lang }}/log_out';
+            return;
+        }
+
+        // Set timeout to auto-logout when session expires
+        setTimeout(function() {
+            alert('Your session has expired. You will be redirected to login.');
+            window.location.href = '/{{ lang }}/log_out';
+        }, timeLeft);
+
+        // Show warning 5 minutes before expiry
+        const warningTime = 5 * 60 * 1000; // 5 minutes
+        if (timeLeft > warningTime) {
+            setTimeout(function() {
+                const remainingMinutes = Math.ceil((expiresAt.getTime() - Date.now()) / 60000);
+                if (confirm('Your session will expire in ' + remainingMinutes + ' minutes. Click OK to stay logged in.')) {
+                    // Reload to refresh session if backend supports it
+                    window.location.reload();
+                }
+            }, timeLeft - warningTime);
+        }
+
+        console.log('Session expires at:', expiresAt, '- Time remaining:', Math.round(timeLeft / 60000), 'minutes');
+    })();
+    </script>
+    {% endif %}
+
 </body>
 
 </html>

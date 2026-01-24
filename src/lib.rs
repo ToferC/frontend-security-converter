@@ -43,12 +43,13 @@ pub fn generate_basic_context(
     // Get session data and add to context
     println!("Getting Session data and adding to Context");
 
-    let (role, user_id, authority_id) = extract_session_data(session);
+    let (role, user_id, authority_id, expires_at) = extract_session_data(session);
 
     ctx.insert("session_user", &session_user);
     ctx.insert("role", &role);
     ctx.insert("user_id", &user_id);
     ctx.insert("authority_id", &authority_id);
+    ctx.insert("expires_at", &expires_at);
 
     let validated_lang = match lang {
         "fr" => "fr",
@@ -62,7 +63,7 @@ pub fn generate_basic_context(
     ctx
 }
 
-pub fn extract_session_data(session: &Session) -> (String, String, String) {
+pub fn extract_session_data(session: &Session) -> (String, String, String, String) {
 
     let role_data = session.get::<String>("role");
 
@@ -88,8 +89,16 @@ pub fn extract_session_data(session: &Session) -> (String, String, String) {
         Err(_) => "".to_string(),
     };
 
+    let expires_at_data = session.get::<String>("expires_at");
+
+    let expires_at = match expires_at_data {
+        Ok(Some(e)) => e,
+        Ok(None) => "".to_string(),
+        Err(_) => "".to_string(),
+    };
+
     println!("{}-{}-{}", &role, &user_id, &authority_id);
 
-    (role, user_id, authority_id)
+    (role, user_id, authority_id, expires_at)
 }
 

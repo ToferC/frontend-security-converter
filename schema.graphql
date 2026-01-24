@@ -95,12 +95,12 @@ type ClassificationSchema {
   fromNatoTopSecret: String!
   caveats: String!
   version: String!
-  authorityId: UUID!
+  nationId: UUID!
   createdAt: NaiveDateTime!
   updatedAt: NaiveDateTime!
   expiresAt: NaiveDateTime
   getCreator: User!
-  getAuthority: Authority!
+  getNation: Nation!
 }
 """
 A request for security classification conversion to the middleware.
@@ -453,8 +453,8 @@ type Query {
   classificationSchemasByNationCode(nationCode: String!): [ClassificationSchema!]!
   "Returns a specific classification schema by nation code and version"
   classificationSchemaByNationCodeAndVersion(nationCode: String!, version: String!): ClassificationSchema!
-  "Returns classification schemas by authority ID"
-  classificationSchemasByAuthorityId(authorityId: UUID!): [ClassificationSchema!]!
+  "Returns classification schemas by nation ID"
+  classificationSchemasByNationId(nationId: UUID!): [ClassificationSchema!]!
   "Returns the latest classification schema for a given nation code"
   classificationSchemaLatestByNationCode(nationCode: String!): ClassificationSchema!
   "Returns vector of all classification schemas"
@@ -527,6 +527,7 @@ type UserResponse {
   role: String!
   email: String!
   authorityId: UUID
+  expiresAt: NaiveDateTime!
 }
 "Input type for filtering audit logs"
 input AuditLogFilter {

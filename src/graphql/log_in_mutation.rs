@@ -3,6 +3,7 @@ use serde::{Serialize, Deserialize};
 use std::error::Error;
 use reqwest::Client;
 use std::sync::Arc;
+use chrono::NaiveDateTime;
 
 use crate::graphql::log_in_mutation;
 use crate::graphql::log_in::LoginQuery;
@@ -14,7 +15,7 @@ type UUID = String;
     query_path = "queries/log_in.graphql",
     response_derives = "Debug, Serialize, PartialEq"
 )]
-pub struct LogIn; 
+pub struct LogIn;
 
 
 pub async fn login(email: String, password: String, api_url: &str, client: Arc<Client>) -> Result<log_in::ResponseData, Box<dyn Error>> {

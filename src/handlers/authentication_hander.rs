@@ -77,7 +77,13 @@ pub async fn login_form_input(
 
     session.insert("bearer", login_data.bearer.to_owned())
         .expect("Unable to set bearer");
-             
+
+    // Store session expiration time as ISO string
+
+    session.insert("expires_at", login_data.expires_at.to_string())
+        .expect("Unable to set expires_at");
+    
+
     return HttpResponse::Found()
         .append_header(("Location", "/"))
         .append_header(("Bearer", login_data.bearer))

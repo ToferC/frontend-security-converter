@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 use chrono::{NaiveDateTime};
 
 use ollama_rs::{
-    Ollama, generation::{
+    generation::{
         completion::request::GenerationRequest, parameters::{FormatType, JsonSchema, JsonStructure}
     }, models::ModelOptions
 };
@@ -329,10 +329,14 @@ pub async fn submit_document(
     let data_obj_format = FormatType::StructuredJson(Box::new(JsonStructure::new::<LLMFields>()));
 
     // Options: ministral-3:14b, mistral-small, gemma3:1b
-    let model = "ministral-3:14b".to_owned();
-    let prompt = format!("Take the data from document to populate metadata and data object fields: {}", &form.content);
+    // qwen3:4b-instruct-2507-q4_K_M
 
-    let ollama = Ollama::default();
+    let model = "qwen3:4b-instruct-2507-q4_K_M".to_owned();
+    let prompt = format!("Take the data from document to populate metadata and data object fields from {:?} using user input content {}", 
+        &data_obj_format,
+        &form.content);
+
+    let ollama = &data.llm;
 
     println!("Starting LLM generation using {}", &model);
 
