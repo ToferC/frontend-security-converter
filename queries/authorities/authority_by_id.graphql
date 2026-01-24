@@ -29,6 +29,7 @@ query AuthorityById($id:UUID!) {
       dataObjectId
       sourceNationClassification
       sourceNationCode
+      targetNationCodes
       createdAt
       updatedAt
       completedAt
