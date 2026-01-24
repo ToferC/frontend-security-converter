@@ -3,6 +3,7 @@
 {% block content %}
         <div class="col m-md-2 m-1">
             <div class="mb-4">
+                <br>
                 <h1 class="mb-3">{{ fluent(key="welcome-to", lang=lang) }}</h1>
 
                 {% if session_user != "" %}
@@ -13,6 +14,42 @@
             </div>
 
             <div class="mb-4">
+
+                <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-info text-white">
+                            <h3 class="mb-0 h5">🏷️ Search by Tag</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-2">Find documents by tag keywords</p>
+                            <div class="input-group">
+                                <input id="tagSearchbar" class="form-control" type="text" placeholder="Enter tag (e.g., sigint, logistics)" aria-label="Search Tag">
+                                <button class="btn btn-info" id="tagSearch" type="button">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0 h5">📂 Search by Domain</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-2">Find documents by mission domain</p>
+                            <div class="input-group">
+                                <input id="domainSearchbar" class="form-control" type="text" placeholder="Enter domain (e.g., INTELLIGENCE)" aria-label="Search Domain">
+                                <button class="btn btn-primary" id="domainSearch" type="button">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
                 <h2 class="h3 mb-3">Authorities by Nation</h2>
 
                 {% if authorities %}
@@ -76,14 +113,41 @@
 
 {% block scripts %}
 <script>
+    // Tag search
+    document.getElementById("tagSearch").addEventListener("click", tagSearch);
+    document.getElementById("tagSearchbar").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") tagSearch();
+    });
+
+    function tagSearch() {
+        var tag = document.getElementById("tagSearchbar").value.trim();
+        if (tag) {
+            window.location.href = '/{{ lang }}/search_metadata/pattern/' + encodeURIComponent(tag);
+        }
+    }
+
+    // Domain search
+    document.getElementById("domainSearch").addEventListener("click", domainSearch);
+    document.getElementById("domainSearchbar").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") domainSearch();
+    });
+
+    function domainSearch() {
+        var domain = document.getElementById("domainSearchbar").value.trim();
+        if (domain) {
+            window.location.href = '/{{ lang }}/metadata/domain/' + encodeURIComponent(domain);
+        }
+    }
+
+    // People search
     document.getElementById("peopleSearch").addEventListener("click", peopleSearch);
+    document.getElementById("personSearchbar").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") peopleSearch();
+    });
 
-    function peopleSearch() {  
-        var result = document.getElementById("personSearchbar").value;  
-        window.location.href = '/{{ lang }}/person_by_name/'+result;
-    };
-
+    function peopleSearch() {
+        var result = document.getElementById("personSearchbar").value;
+        window.location.href = '/{{ lang }}/person_by_name/' + result;
+    }
 </script>
-
-
 {% endblock scripts%}

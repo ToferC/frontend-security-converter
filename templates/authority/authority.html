@@ -215,11 +215,19 @@
                                     {% endif %}
                                     {% if request.metadata.domain %}
                                     <dt class="col-sm-5">Domain:</dt>
-                                    <dd class="col-sm-7">{{ request.metadata.domain }}</dd>
+                                    <dd class="col-sm-7">
+                                        <a href="/{{ lang }}/metadata/domain/{{ request.metadata.domain }}" class="badge badge-domain-link">{{ request.metadata.domain }}</a>
+                                    </dd>
                                     {% endif %}
                                     {% if request.metadata.tags %}
                                     <dt class="col-sm-5">Tags:</dt>
-                                    <dd class="col-sm-7">{{ request.metadata.tags }}</dd>
+                                    <dd class="col-sm-7">
+                                        {% for tag in request.metadata.tags %}
+                                            {% if tag %}
+                                            <a href="/{{ lang }}/metadata/tag/{{ tag }}" class="badge badge-tag me-1">{{ tag }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </dd>
                                     {% endif %}
                                 </dl>
                             </div>

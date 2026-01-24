@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Documents in Domain: {{ domain }}</title>
+{% endblock title %}
+
+{% block content %}
+    <style>
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: #60a5fa;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-header h1 .domain-name {
+            background: #1e40af;
+            padding: 4px 12px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .page-header .nav-link {
+            color: #93c5fd;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        /* Compact Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-pill .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .stat-pill .stat-label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Compact Breakdown Section */
+        .breakdown-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .breakdown-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .breakdown-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .breakdown-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .breakdown-item {
+            background: #334155;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .breakdown-item .count {
+            background: #475569;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: #60a5fa;
+            font-size: 11px;
+        }
+
+        /* Tags in Domain */
+        .domain-tags {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+
+        .domain-tags h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* Table Styles */
+        .results-table {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .results-table h3 {
+            margin: 0;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #e0e0e0;
+            background: #0f172a;
+            border-bottom: 1px solid #334155;
+        }
+
+        .results-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #94a3b8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #334155;
+            background: #0f172a;
+        }
+
+        .results-table td {
+            padding: 10px 12px;
+            color: #cbd5e1;
+            font-size: 13px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .results-table tr:hover {
+            background: #263548;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-classification {
+            background: #991b1b;
+            color: #fca5a5;
+        }
+
+        .badge-domain {
+            background: #1e40af;
+            color: #93c5fd;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .badge-domain:hover {
+            background: #2563eb;
+        }
+
+        .badge-tag {
+            background: #6b21a8;
+            color: #e9d5ff;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .badge-tag:hover {
+            background: #7c3aed;
+        }
+
+        .badge-nato {
+            background: #065f46;
+            color: #6ee7b7;
+        }
+
+        .badge-restriction {
+            background: #713f12;
+            color: #fcd34d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+
+        .pill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .doc-title {
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .doc-desc {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+    </style>
+
+    <div class="dashboard-container">
+        <div class="page-header">
+            <h1>📂 Domain:<span class="domain-name">{{ domain }}</span></h1>
+            <a href="/{{ lang }}" class="nav-link">← Home</a>
+        </div>
+
+        <div id="content"></div>
+    </div>
+
+    <script type="application/json" id="metadata-data">
+        {{ metadata_json | safe }}
+    </script>
+
+    <script>
+        const metadataList = JSON.parse(document.getElementById('metadata-data').textContent);
+        const currentDomain = '{{ domain }}';
+        const lang = '{{ lang }}';
+
+        function renderDomainResults() {
+            const total = metadataList.length;
+            let completed = 0;
+            const classifications = {};
+            const tags = {};
+            const formats = {};
+            const sourceNations = {};
+
+            metadataList.forEach(m => {
+                if (m.dataObject?.conversionRequest?.completedAt) completed++;
+                if (m.securityClassification) classifications[m.securityClassification] = (classifications[m.securityClassification] || 0) + 1;
+                if (m.format) formats[m.format] = (formats[m.format] || 0) + 1;
+                if (m.dataObject?.conversionRequest?.sourceNationCode) {
+                    const nation = m.dataObject.conversionRequest.sourceNationCode;
+                    sourceNations[nation] = (sourceNations[nation] || 0) + 1;
+                }
+                if (m.tags) {
+                    m.tags.forEach(tag => {
+                        if (tag) tags[tag] = (tags[tag] || 0) + 1;
+                    });
+                }
+            });
+
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = `
+                <div class="stats-bar">
+                    <div class="stat-pill">
+                        <span class="stat-value">${total}</span>
+                        <span class="stat-label">Documents</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-value">${completed}</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-value">${total - completed}</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-value">${total > 0 ? Math.round((completed / total) * 100) : 0}%</span>
+                        <span class="stat-label">Complete</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-value">${Object.keys(tags).length}</span>
+                        <span class="stat-label">Unique Tags</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-value">${Object.keys(sourceNations).length}</span>
+                        <span class="stat-label">Nations</span>
+                    </div>
+                </div>
+
+                <div class="breakdown-row">
+                    ${renderBreakdown('Classifications', classifications)}
+                    ${renderBreakdown('Source Nations', sourceNations)}
+                    ${renderBreakdown('Formats', formats)}
+                </div>
+
+                ${Object.keys(tags).length > 0 ? `
+                <div class="domain-tags">
+                    <h4>Tags in This Domain</h4>
+                    <div class="tag-list">
+                        ${Object.entries(tags)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 15)
+                            .map(([tag, count]) => `<a href="/${lang}/metadata/tag/${encodeURIComponent(tag)}" class="badge badge-tag">${tag} (${count})</a>`)
+                            .join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="results-table">
+                    <h3>Matching Documents (${total})</h3>
+                    ${renderDocumentsTable(metadataList)}
+                </div>
+            `;
+        }
+
+        function renderBreakdown(title, data) {
+            const entries = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            if (entries.length === 0) return '';
+
+            return `
+                <div class="breakdown-card">
+                    <h4>${title}</h4>
+                    <div class="breakdown-items">
+                        ${entries.map(([name, count]) =>
+                            `<span class="breakdown-item">${name}<span class="count">${count}</span></span>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDocumentsTable(list) {
+            if (list.length === 0) return '<div class="empty-state">No documents found</div>';
+
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Document</th>
+                            <th>Classification</th>
+                            <th>NATO</th>
+                            <th>Source</th>
+                            <th>Tags</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${list.map(m => {
+                            const dataObj = m.dataObject || {};
+                            const req = dataObj.conversionRequest || {};
+                            const resp = req.conversionResponse || {};
+                            const docTags = (m.tags || []).filter(t => t).map(t =>
+                                `<a href="/${lang}/metadata/tag/${encodeURIComponent(t)}" class="badge badge-tag">${t}</a>`
+                            ).join(' ');
+
+                            return `
+                                <tr>
+                                    <td>
+                                        <div class="doc-title">${dataObj.title || 'N/A'}</div>
+                                        ${dataObj.description ? `<div class="doc-desc">${dataObj.description.substring(0, 60)}${dataObj.description.length > 60 ? '...' : ''}</div>` : ''}
+                                    </td>
+                                    <td><span class="badge badge-classification">${m.securityClassification || 'N/A'}</span></td>
+                                    <td><span class="badge badge-nato">${resp.natoEquivalent || 'Pending'}</span></td>
+                                    <td>${req.sourceNationCode || 'N/A'}</td>
+                                    <td><div class="pill-list">${docTags || 'None'}</div></td>
+                                    <td>${new Date(m.createdAt).toLocaleDateString()}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        window.addEventListener('DOMContentLoaded', renderDomainResults);
+    </script>
+{% endblock content %}

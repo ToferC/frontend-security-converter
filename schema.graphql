@@ -423,6 +423,30 @@ type Query {
   the distribution of classified data across different domains.
   """
   metadataCountsByDomain: [DomainCount!]!
+  """
+  Search for metadata records by exact tag match
+  
+  Returns all metadata where the tags array contains the exact tag value (case-sensitive).
+  
+  Example: tag = "sigint" will match only metadata with exactly "sigint" in tags
+  """
+  metadataByTag(tag: String!): [MetadataGraphQL!]!
+  """
+  Search for metadata records by multiple exact tags (OR logic)
+  
+  Returns all metadata where the tags array contains ANY of the specified tags.
+  
+  Example: tags = ["sigint", "humint"] will match metadata with either tag
+  """
+  metadataByTags(tags: [String!]!): [MetadataGraphQL!]!
+  """
+  Search for metadata records by tag pattern (case-insensitive, partial match)
+  
+  Returns all metadata where any tag contains the search pattern.
+  
+  Example: pattern = "int" will match "sigint", "humint", "intelligence", etc.
+  """
+  searchMetadataByTag(pattern: String!): [MetadataGraphQL!]!
   "Returns count of Nations in the system"
   nationCount: Int!
   "Returns a nation by its Uuid"

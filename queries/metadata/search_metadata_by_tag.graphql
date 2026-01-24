@@ -1,0 +1,37 @@
+query SearchMetadataByTag($pattern: String!) {
+  searchMetadataByTag(pattern: $pattern) {
+    id
+    identifier
+    securityClassification
+    domain
+    tags
+    format
+    formatSize
+    handlingRestrictions
+    releasableToCountries
+    createdAt
+    dataObject {
+      id
+      title
+      description
+      conversionRequest {
+        id
+        sourceNationClassification
+        sourceNationCode
+        targetNationCodes
+        completedAt
+        conversionResponse {
+          natoEquivalent
+        }
+      }
+    }
+    originatingOrganization {
+      id
+      name
+    }
+    custodianOrganization {
+      id
+      name
+    }
+  }
+}

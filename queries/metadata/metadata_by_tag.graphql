@@ -1,0 +1,37 @@
+query MetadataByTag($tag: String!) {
+  metadataByTag(tag: $tag) {
+    id
+    identifier
+    securityClassification
+    domain
+    tags
+    format
+    formatSize
+    handlingRestrictions
+    releasableToCountries
+    createdAt
+    dataObject {
+      id
+      title
+      description
+      conversionRequest {
+        id
+        sourceNationClassification
+        sourceNationCode
+        targetNationCodes
+        completedAt
+        conversionResponse {
+          natoEquivalent
+        }
+      }
+    }
+    originatingOrganization {
+      id
+      name
+    }
+    custodianOrganization {
+      id
+      name
+    }
+  }
+}

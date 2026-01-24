@@ -36,6 +36,10 @@ use crate::handlers::{
     // analytics
     authority_analytics,
 
+    // metadata
+    metadata_by_tag,
+    metadata_by_domain,
+    search_metadata,
 };
 
 pub fn configure_services(config: &mut web::ServiceConfig) {
@@ -61,6 +65,12 @@ pub fn configure_services(config: &mut web::ServiceConfig) {
 
     // analytics
     config.service(authority_analytics);
+
+    // metadata
+    config.service(metadata_by_tag);
+    config.service(metadata_by_domain);
+    config.service(search_metadata);
+
 
     //config.service(about);
     config.service(toggle_language);

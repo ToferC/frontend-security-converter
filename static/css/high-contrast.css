@@ -333,6 +333,54 @@ h1, h2, h3, h4, h5, h6,
     color: #FFFFFF !important;
 }
 
+/* Tag Badge - Clickable Purple/Violet Style */
+.badge-tag {
+    background-color: #6b21a8 !important;
+    color: #e9d5ff !important;
+    border-color: #7c3aed !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-block !important;
+}
+
+.badge-tag:hover,
+.badge-tag:focus {
+    background-color: #7c3aed !important;
+    color: #FFFFFF !important;
+    border-color: #a78bfa !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4) !important;
+}
+
+a.badge-tag {
+    text-decoration: none !important;
+}
+
+/* Domain Badge - Clickable Blue Style */
+.badge-domain-link {
+    background-color: #1e40af !important;
+    color: #93c5fd !important;
+    border-color: #3b82f6 !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-block !important;
+}
+
+.badge-domain-link:hover,
+.badge-domain-link:focus {
+    background-color: #2563eb !important;
+    color: #FFFFFF !important;
+    border-color: #60a5fa !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4) !important;
+}
+
+a.badge-domain-link {
+    text-decoration: none !important;
+}
+
 /* ==========================================================================
    Alerts - High Contrast Messaging
    ========================================================================== */
