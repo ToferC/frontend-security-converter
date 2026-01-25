@@ -393,8 +393,13 @@
                             return `
                                 <tr>
                                     <td>
-                                        <div class="doc-title">${dataObj.title || 'N/A'}</div>
-                                        ${dataObj.description ? `<div class="doc-desc">${dataObj.description.substring(0, 60)}${dataObj.description.length > 60 ? '...' : ''}</div>` : ''}
+                                        ${req.id ? `<a href="/${lang}/conversion_request/${req.id}" style="text-decoration:none;color:inherit;">
+                                            <div class="doc-title" style="color:#93c5fd;cursor:pointer;">${dataObj.title || 'N/A'}</div>
+                                            ${dataObj.description ? `<div class="doc-desc">${dataObj.description.substring(0, 60)}${dataObj.description.length > 60 ? '...' : ''}</div>` : ''}
+                                        </a>` : `
+                                            <div class="doc-title">${dataObj.title || 'N/A'}</div>
+                                            ${dataObj.description ? `<div class="doc-desc">${dataObj.description.substring(0, 60)}${dataObj.description.length > 60 ? '...' : ''}</div>` : ''}
+                                        `}
                                     </td>
                                     <td><span class="badge badge-classification">${m.securityClassification || 'N/A'}</span></td>
                                     <td><span class="badge badge-nato">${resp.natoEquivalent || 'Pending'}</span></td>

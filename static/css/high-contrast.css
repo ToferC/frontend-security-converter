@@ -196,6 +196,35 @@ h1, h2, h3, h4, h5, h6,
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
 }
 
+/* Outline Button Variants */
+.btn-outline-primary {
+    background-color: transparent !important;
+    border-color: #0099FF !important;
+    color: #0099FF !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: #0066CC !important;
+    border-color: #00CCFF !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.3) !important;
+}
+
+.btn-outline-info {
+    background-color: transparent !important;
+    border-color: #00DDFF !important;
+    color: #00DDFF !important;
+}
+
+.btn-outline-info:hover,
+.btn-outline-info:focus {
+    background-color: #00DDFF !important;
+    border-color: #00DDFF !important;
+    color: #000000 !important;
+    box-shadow: 0 0 0 3px rgba(0, 221, 255, 0.3) !important;
+}
+
 /* ==========================================================================
    Cards - Dark with Bright Headers
    ========================================================================== */

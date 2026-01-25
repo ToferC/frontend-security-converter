@@ -35,15 +35,21 @@
                 <div class="col-md-6 mb-3">
                     <div class="card shadow-sm h-100">
                         <div class="card-header bg-primary text-white">
-                            <h3 class="mb-0 h5">📂 Search by Domain</h3>
+                            <h3 class="mb-0 h5">📂 Browse by Domain</h3>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted small mb-2">Find documents by mission domain</p>
-                            <div class="input-group">
-                                <input id="domainSearchbar" class="form-control" type="text" placeholder="Enter domain (e.g., INTELLIGENCE)" aria-label="Search Domain">
-                                <button class="btn btn-primary" id="domainSearch" type="button">
-                                    Search
-                                </button>
+                            <p class="text-muted small mb-2">Select a mission domain to view documents</p>
+                            <div class="d-flex flex-wrap gap-2" style="gap: 0.5rem;">
+                                <a href="/{{ lang }}/metadata/domain/INTEL" class="btn btn-sm btn-outline-primary">INTEL</a>
+                                <a href="/{{ lang }}/metadata/domain/CYBER" class="btn btn-sm btn-outline-primary">CYBER</a>
+                                <a href="/{{ lang }}/metadata/domain/OPERATIONS" class="btn btn-sm btn-outline-primary">OPERATIONS</a>
+                                <a href="/{{ lang }}/metadata/domain/LOGISTICS" class="btn btn-sm btn-outline-primary">LOGISTICS</a>
+                                <a href="/{{ lang }}/metadata/domain/COMMUNICATIONS" class="btn btn-sm btn-outline-primary">COMMUNICATIONS</a>
+                                <a href="/{{ lang }}/metadata/domain/NUCLEAR" class="btn btn-sm btn-outline-primary">NUCLEAR</a>
+                                <a href="/{{ lang }}/metadata/domain/COUNTERTERRORISM" class="btn btn-sm btn-outline-primary">COUNTERTERRORISM</a>
+                                <a href="/{{ lang }}/metadata/domain/MARITIME" class="btn btn-sm btn-outline-primary">MARITIME</a>
+                                <a href="/{{ lang }}/metadata/domain/AEROSPACE" class="btn btn-sm btn-outline-primary">AEROSPACE</a>
+                                <a href="/{{ lang }}/metadata/domain/SPECIAL-OPS" class="btn btn-sm btn-outline-primary">SPECIAL-OPS</a>
                             </div>
                         </div>
                     </div>
@@ -123,19 +129,6 @@
         var tag = document.getElementById("tagSearchbar").value.trim();
         if (tag) {
             window.location.href = '/{{ lang }}/search_metadata/pattern/' + encodeURIComponent(tag);
-        }
-    }
-
-    // Domain search
-    document.getElementById("domainSearch").addEventListener("click", domainSearch);
-    document.getElementById("domainSearchbar").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") domainSearch();
-    });
-
-    function domainSearch() {
-        var domain = document.getElementById("domainSearchbar").value.trim();
-        if (domain) {
-            window.location.href = '/{{ lang }}/metadata/domain/' + encodeURIComponent(domain);
         }
     }
 

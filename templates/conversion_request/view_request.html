@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="col m-md-2 m-1">
+    <div class="mb-4">
+        <h1 class="mb-3">Conversion Request Details</h1>
+        <p class="text-muted">Request ID: {{ conversion_request.id }}</p>
+    </div>
+
+    {% if conversion_request %}
+        <!-- Status Overview -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header {% if conversion_request.isCompleted %}bg-success{% else %}bg-warning{% endif %} text-white">
+                <h2 class="mb-0 h5">
+                    {% if conversion_request.isCompleted %}
+                        ✓ Conversion Complete
+                    {% else %}
+                        ⏳ Pending Conversion
+                    {% endif %}
+                </h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Created:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.createdAt }}</dd>
+
+                    {% if conversion_request.completedAt %}
+                    <dt class="col-sm-4">Completed:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.completedAt }}</dd>
+                    {% endif %}
+
+                    <dt class="col-sm-4">Last Updated:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.updatedAt }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Data Object Information -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0 h5">📄 Data Object</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    {% if conversion_request.dataObject %}
+                        <dt class="col-sm-4">Title:</dt>
+                        <dd class="col-sm-8"><strong>{{ conversion_request.dataObject.title }}</strong></dd>
+
+                        {% if conversion_request.dataObject.description %}
+                        <dt class="col-sm-4">Description:</dt>
+                        <dd class="col-sm-8">{{ conversion_request.dataObject.description }}</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-4">Object ID:</dt>
+                        <dd class="col-sm-8"><code>{{ conversion_request.dataObject.id }}</code></dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+
+        <!-- Classification Information -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-danger text-white">
+                <h2 class="mb-0 h5">🔒 Classification Details</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Source Nation:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-info">{{ conversion_request.sourceNationCode }}</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Source Classification:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-danger">{{ conversion_request.sourceNationClassification }}</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Target Nations:</dt>
+                    <dd class="col-sm-8">
+                        {% if conversion_request.targetNationCodes %}
+                            {% for code in conversion_request.targetNationCodes %}
+                                <span class="badge bg-success me-1">{{ code }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Metadata Information -->
+        {% if conversion_request.metadata %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h2 class="mb-0 h5">📋 Metadata</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    {% if conversion_request.metadata.identifier %}
+                    <dt class="col-sm-4">Identifier:</dt>
+                    <dd class="col-sm-8"><code>{{ conversion_request.metadata.identifier }}</code></dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.securityClassification %}
+                    <dt class="col-sm-4">Security Classification:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-danger">{{ conversion_request.metadata.securityClassification }}</span>
+                    </dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.domain %}
+                    <dt class="col-sm-4">Domain:</dt>
+                    <dd class="col-sm-8">
+                        <a href="/{{ lang }}/metadata/domain/{{ conversion_request.metadata.domain }}" class="badge badge-domain-link">{{ conversion_request.metadata.domain }}</a>
+                    </dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.tags %}
+                    <dt class="col-sm-4">Tags:</dt>
+                    <dd class="col-sm-8">
+                        {% for tag in conversion_request.metadata.tags %}
+                            {% if tag %}
+                            <a href="/{{ lang }}/metadata/tag/{{ tag }}" class="badge badge-tag me-1">{{ tag }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.format %}
+                    <dt class="col-sm-4">Format:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.format }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.formatSize %}
+                    <dt class="col-sm-4">Format Size:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.formatSize }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.authorizationReference %}
+                    <dt class="col-sm-4">Authorization Reference:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.authorizationReference }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.authorizationReferenceDate %}
+                    <dt class="col-sm-4">Authorization Date:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.authorizationReferenceDate }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.handlingRestrictions %}
+                    <dt class="col-sm-4">Handling Restrictions:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.handlingRestrictions }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.handlingAuthority %}
+                    <dt class="col-sm-4">Handling Authority:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.handlingAuthority }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.releasableToCountries %}
+                    <dt class="col-sm-4">Releasable To Countries:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.releasableToCountries }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.releasableToOrganizations %}
+                    <dt class="col-sm-4">Releasable To Organizations:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.releasableToOrganizations }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.releasableToCategories %}
+                    <dt class="col-sm-4">Releasable To Categories:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.releasableToCategories }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.disclosureCategory %}
+                    <dt class="col-sm-4">Disclosure Category:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.metadata.disclosureCategory }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.originatingOrganization %}
+                    <dt class="col-sm-4">Originating Organization:</dt>
+                    <dd class="col-sm-8">
+                        {{ conversion_request.metadata.originatingOrganization.name }}
+                        {% if conversion_request.metadata.originatingOrganization.email %}
+                        <br><small class="text-muted">{{ conversion_request.metadata.originatingOrganization.email }}</small>
+                        {% endif %}
+                    </dd>
+                    {% endif %}
+
+                    {% if conversion_request.metadata.custodianOrganization %}
+                    <dt class="col-sm-4">Custodian Organization:</dt>
+                    <dd class="col-sm-8">
+                        {{ conversion_request.metadata.custodianOrganization.name }}
+                        {% if conversion_request.metadata.custodianOrganization.email %}
+                        <br><small class="text-muted">{{ conversion_request.metadata.custodianOrganization.email }}</small>
+                        {% endif %}
+                    </dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Conversion Response -->
+        {% if conversion_request.conversionResponse %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h2 class="mb-0 h5">✅ Conversion Response</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    {% if conversion_request.conversionResponse.natoEquivalent %}
+                    <dt class="col-sm-4">NATO Equivalent:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-primary">{{ conversion_request.conversionResponse.natoEquivalent }}</span>
+                    </dd>
+                    {% endif %}
+
+                    {% if conversion_request.conversionResponse.targetNationClassifications %}
+                    <dt class="col-sm-4">Target Nation Classifications:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.conversionResponse.targetNationClassifications }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.conversionResponse.targetClassifications %}
+                    <dt class="col-sm-4">Target Classifications:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.conversionResponse.targetClassifications }}</dd>
+                    {% endif %}
+
+                    <dt class="col-sm-4">Created:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.conversionResponse.createdAt }}</dd>
+
+                    {% if conversion_request.conversionResponse.expiresAt %}
+                    <dt class="col-sm-4">Expires:</dt>
+                    <dd class="col-sm-8">
+                        {{ conversion_request.conversionResponse.expiresAt }}
+                        {% if conversion_request.conversionResponse.isExpired %}
+                        <span class="badge bg-danger ms-2">EXPIRED</span>
+                        {% else %}
+                        <span class="badge bg-success ms-2">VALID</span>
+                        {% endif %}
+                    </dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Authority Information -->
+        {% if conversion_request.authority %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h2 class="mb-0 h5">👤 Authority</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Name:</dt>
+                    <dd class="col-sm-8">
+                        <a href="/{{ lang }}/authority/{{ conversion_request.authority.id }}">{{ conversion_request.authority.name }}</a>
+                    </dd>
+
+                    {% if conversion_request.authority.email %}
+                    <dt class="col-sm-4">Email:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.authority.email }}</dd>
+                    {% endif %}
+
+                    {% if conversion_request.authority.nation %}
+                    <dt class="col-sm-4">Nation:</dt>
+                    <dd class="col-sm-8">
+                        {{ conversion_request.authority.nation.nationName }}
+                        <span class="badge bg-info ms-2">{{ conversion_request.authority.nation.nationCode }}</span>
+                    </dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Creator Information -->
+        {% if conversion_request.creator %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h2 class="mb-0 h5">📝 Created By</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Email:</dt>
+                    <dd class="col-sm-8">{{ conversion_request.creator.email }}</dd>
+
+                    <dt class="col-sm-4">User ID:</dt>
+                    <dd class="col-sm-8"><code>{{ conversion_request.creator.id }}</code></dd>
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> Conversion request not found.
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+{% endblock content %}

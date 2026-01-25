@@ -13,6 +13,8 @@ use crate::graphql::submit_conversion::{ConversionRequestInput, DataObjectInput,
 use crate::handlers::conversion_response::InsertableConversionRequest;
 
 type UUID = String;
+type JSONObject = serde_json::Value;
+
 #[derive(GraphQLQuery, Serialize, Deserialize)]
 #[graphql(
     schema_path = "schema.graphql",
@@ -64,5 +66,42 @@ pub async fn submit_conversion_request(conversion_request: InsertableConversionR
     println!("{:?}", &response);
 
     // serve HTML page with response_body
+    Ok(response)
+}
+
+#[derive(GraphQLQuery, Serialize, Deserialize)]
+#[graphql(
+    schema_path = "schema.graphql",
+    query_path = "queries/conversion_requests/conversion_request_by_id.graphql",
+    response_derives = "Debug, Serialize, PartialEq"
+)]
+pub struct ConversionRequestById;
+
+pub async fn get_conversion_request_by_id(id: String, bearer: String, api_url: &str, client: Arc<Client>) -> Result<conversion_request_by_id::ResponseData, Box<dyn Error>> {
+
+    let request_body = ConversionRequestById::build_query(conversion_request_by_id::Variables {
+        id,
+    });
+
+    let res = client
+        .post(api_url)
+        .header("Bearer", bearer)
+        .json(&request_body)
+        .send()
+        .await?;
+
+    let response_body: Response<conversion_request_by_id::ResponseData> = res.json().await?;
+
+    if let Some(errors) = response_body.errors {
+        println!("there are errors:");
+
+        for error in &errors {
+            println!("{:?}", error);
+        }
+    };
+
+    let response = response_body.data
+        .expect("missing response data");
+
     Ok(response)
 }

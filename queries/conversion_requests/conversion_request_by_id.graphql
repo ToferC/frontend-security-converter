@@ -1,0 +1,72 @@
+query ConversionRequestById($id: UUID!) {
+  conversionRequestById(id: $id) {
+    id
+    creatorId
+    authorityId
+    dataObjectId
+    sourceNationClassification
+    sourceNationCode
+    targetNationCodes
+    createdAt
+    updatedAt
+    completedAt
+    isCompleted
+    authority {
+      id
+      name
+      email
+      nation {
+        id
+        nationName
+        nationCode
+      }
+    }
+    dataObject {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+    }
+    metadata {
+      id
+      identifier
+      authorizationReference
+      authorizationReferenceDate
+      format
+      formatSize
+      securityClassification
+      releasableToCountries
+      releasableToOrganizations
+      releasableToCategories
+      disclosureCategory
+      handlingRestrictions
+      handlingAuthority
+      noHandlingRestrictions
+      domain
+      tags
+      createdAt
+      updatedAt
+      originatingOrganization {
+        id
+        name
+        email
+      }
+      custodianOrganization {
+        id
+        name
+        email
+      }
+    }
+    conversionResponse {
+      id
+      natoEquivalent
+      targetNationClassifications
+      targetClassifications
+      createdAt
+      updatedAt
+      expiresAt
+      isExpired
+    }
+  }
+}
