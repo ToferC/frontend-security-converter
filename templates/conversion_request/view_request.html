@@ -216,12 +216,16 @@
 
                     {% if conversion_request.conversionResponse.targetNationClassifications %}
                     <dt class="col-sm-4">Target Nation Classifications:</dt>
-                    <dd class="col-sm-8">{{ conversion_request.conversionResponse.targetNationClassifications }}</dd>
-                    {% endif %}
-
-                    {% if conversion_request.conversionResponse.targetClassifications %}
-                    <dt class="col-sm-4">Target Classifications:</dt>
-                    <dd class="col-sm-8">{{ conversion_request.conversionResponse.targetClassifications }}</dd>
+                    <dd class="col-sm-8">
+                        <div class="d-flex flex-column gap-2">
+                            {% for key, tn_class in conversion_request.conversionResponse.targetNationClassifications %}
+                            <div>
+                                <span class="badge bg-info me-2">{{ key }}</span>
+                                <span class="badge bg-success">{{ tn_class }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </dd>
                     {% endif %}
 
                     <dt class="col-sm-4">Created:</dt>
