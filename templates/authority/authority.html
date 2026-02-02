@@ -152,6 +152,16 @@
                                 <dd class="col-sm-7"><span class="badge bg-secondary">{{ request.sourceNationClassification }}</span></dd>
                                 <dt class="col-sm-5">Source Nations:</dt>
                                 <dd class="col-sm-7">{{ request.sourceNationCode }}</dd>
+                                <dt class="col-sm-5">Target Nations:</dt>
+                                <dd class="col-sm-7">
+                                    {% if request.targetNationCodes %}
+                                        {% for code in request.targetNationCodes %}
+                                            <span class="badge bg-success me-1">{{ code }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </dd>
                                 <dt class="col-sm-5">Created:</dt>
                                 <dd class="col-sm-7">{{ request.createdAt }}</dd>
                                 {% if request.completedAt %}
