@@ -28,6 +28,10 @@ button-explore-demo-data = Explore demonstration data
 about = About the Project
 language-toggle = Français
 profile = Profile
+
+## Disclaimer
+disclaimer-title = PROOF OF CONCEPT - DEMONSTRATION ONLY
+disclaimer-text = This application is a proof of concept for demonstration purposes only. All data displayed is fictional and for testing purposes. This system is not intended for operational use with classified or sensitive information.
 logout = Logout
 user-index = User Index
 login = Log in

@@ -26,8 +26,12 @@ conversion-request = Conversion Request
 ## Base & Navbar
 button-explore-demo-data = Explore demonstration data
 about = About the Project
-language-toggle = Français
-profile = Profile
+language-toggle = English
+profile = Profil
+
+## Disclaimer
+disclaimer-title = PREUVE DE CONCEPT - DÉMONSTRATION SEULEMENT
+disclaimer-text = Cette application est une preuve de concept à des fins de démonstration seulement. Toutes les données affichées sont fictives et à des fins de test. Ce système n'est pas destiné à un usage opérationnel avec des informations classifiées ou sensibles.
 logout = Logout
 user-index = User Index
 login = Log in
