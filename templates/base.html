@@ -308,6 +308,23 @@
           </nav>
     </div>
 
+    <!-- Security Disclaimer Banner -->
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin: 0; border-radius: 0; border-left: none; border-right: none; background-color: #fff3cd; border-color: #ffeaa7;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h5 class="alert-heading mb-2">
+                        ⚠️ {{ fluent(key="disclaimer-title", lang=lang )}}
+                    </h5>
+                    <p class="mb-2">{{ fluent(key="disclaimer-text", lang=lang )}}</p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
 
     <div class="row">
